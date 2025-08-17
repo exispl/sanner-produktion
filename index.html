@@ -3,176 +3,71 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Kartonowy Napełniacz — v0.007u</title>
+  <title>Kartonowy Napełniacz — v0.007r</title>
   <link rel="icon" href="favicon.ico">
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link id="fontLoader" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Noto+Naskh+Arabic:wght@400;600&family=Open+Sans:wght@400;600&family=Roboto:wght@400;700&family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    :root{
-      --bg:#0e1117; --panel:#121826; --panel2:#0f1624; --text:#e5e7eb; --muted:#93a4b5; --accent:#22c55e; --line:#1f2937; --yellow:#fde047;
-      --ok:#22c55e; --blue:#60a5fa; --pink:#db2777; --orange:#f59e0b; --gray:#9ca3af; --tagbg:#0b1220;
-      --font:"Inter", system-ui, Segoe UI, Roboto, Arial, sans-serif;
-      --font-ar:"Noto Naskh Arabic", "Inter", system-ui, Segoe UI, Roboto, Arial, sans-serif;
-      --base-font-size:16.5px;
-    }
-    .theme-light{ --bg:#f3f4f6; --panel:#ffffff; --panel2:#f8fafc; --text:#0f172a; --muted:#475569; --accent:#06b6d4; --line:#e5e7eb; --tagbg:#f3f4f6 }
-    .theme-green{ --bg:#071610; --panel:#0c241b; --panel2:#092018; --accent:#22c55e }
-    .theme-blue{  --bg:#08131f; --panel:#0c1f35; --panel2:#0a1a2c; --accent:#38bdf8 }
-    .theme-yellow{--bg:#171305; --panel:#271f04; --panel2:#201a04; --accent:#fde047 }
-    body{margin:0;background:linear-gradient(180deg,var(--panel),var(--panel2));color:var(--text);font:var(--base-font-size)/1.5 var(--font)}
-    body.lang-ar{ font-size: calc(var(--base-font-size) + 2px); font-family: var(--font-ar); }
-    .wrap{max-width:1220px;margin:auto;padding:12px 16px}
+    :root{ --bg:#0e1117; --panel:#121826; --panel2:#0f1624; --text:#e5e7eb; --muted:#93a4b5; --accent:#22c55e; --line:#1f2937; --yellow:#fde047; }
+    body{margin:0;background:linear-gradient(180deg,var(--panel),var(--panel2));color:var(--text);font:15px/1.45 system-ui,Segoe UI,Roboto,Arial,sans-serif}
+    .wrap{max-width:1200px;margin:auto;padding:12px 16px}
     .panel{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
-    .head{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--line)}
-    .body{padding:12px 16px}
+    .head{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--line)}
+    .body{padding:10px 14px}
     .badge{font-size:12px;color:#cbd5e1;background:#0b1220;padding:4px 8px;border-radius:999px;border:1px solid var(--line)}
-    .btn{border:1px solid var(--line);background:#0b1220;color:var(--text);padding:8px 12px;border-radius:10px;cursor:pointer}
+    .btn{border:1px solid var(--line);background:#0b1220;color:var(--text);padding:6px 10px;border-radius:10px;cursor:pointer}
     .btn.primary{background:#0d3b2c;border-color:#184c39}
     .btn.ghost{background:transparent}
-    .machines{display:grid;grid-template-columns:1fr;gap:14px}
+    .machines{display:grid;grid-template-columns:1fr;gap:12px}
     @media(min-width:900px){.machines{grid-template-columns:1fr 1fr}}
     .machine .title{display:flex;align-items:center;gap:10px}
-    .machine .title h2{margin:0;font-size:28px;letter-spacing:.3px}
-    .meta{color:var(--muted);font-size:13px;margin:6px 0}
-    .meta strong{color:var(--text)}
-    .progress{margin-top:8px;height:22px;border:1px solid var(--line);border-radius:12px;background:#0b1220;position:relative;overflow:hidden}
+    .machine .title h2{margin:0;font-size:26px;letter-spacing:.3px}
+    .meta{color:var(--muted);font-size:12px;margin:6px 0}
+    .progress{margin-top:6px;height:18px;border:1px solid var(--line);border-radius:12px;background:#0b1220;position:relative;overflow:hidden}
     .progress .bar{position:absolute;inset:0 100% 0 0;background:linear-gradient(90deg,#22c55e,#86efac);transition:width .25s ease}
-    .progress .label{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:13px}
-    /* Prüfung with tag buttons inside bar */
-    .pruef{margin-top:12px}
-    .pr-bar{position:relative;height:78px;border:1px solid var(--line);border-radius:14px;background:#0b1220;overflow:hidden}
+    .progress .label{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:12px}
+    /* Prüfung bigger + themed select with yellow text */
+    .pruef{margin-top:10px}
+    .pr-head{display:flex;gap:8px;align-items:center;margin-bottom:6px}
+    .pr-head select.pr-select{background:var(--panel2);border:1px solid var(--line);color:var(--yellow);padding:8px 10px;border-radius:10px}
+    .pr-bar{position:relative;height:68px;border:1px solid var(--line);border-radius:14px;background:#0b1220;overflow:hidden}
     .pr-fill{position:absolute;left:0;top:0;bottom:0;width:0%;background:linear-gradient(90deg,#22c55e,#84cc16);transition:width .5s linear}
-    .pr-label{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:700;letter-spacing:.3px; cursor:context-menu}
-    .pr-controls{position:absolute;left:8px;top:8px;display:flex;gap:6px}
-    .tag{display:inline-block;padding:4px 10px;border-radius:999px;border:1px solid #3b4760;background:var(--tagbg);font-size:12px;cursor:pointer;user-select:none}
-    .tag.active{background:#1f2937;border-color:#64748b}
+    .pr-label{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:700;letter-spacing:.3px}
     .pr-reset{position:absolute;right:10px;top:50%;transform:translateY(-50%);border:1px solid var(--line);background:var(--panel2);border-radius:8px;padding:4px 8px;cursor:pointer}
-
-    /* Custom modal */
-    .modal{position:fixed; inset:0; display:none; align-items:center; justify-content:center; z-index:80; background:rgba(0,0,0,.55)}
-    .modal.open{display:flex}
-    .modal .box{width:min(420px,92vw); background:linear-gradient(180deg,var(--panel),var(--panel2)); border:1px solid var(--line); border-radius:16px; box-shadow:0 20px 60px rgba(0,0,0,.45); padding:16px}
-
-    /* Notes/Chat */
-    .notes-list .row{display:flex;gap:10px;align-items:flex-start;border-bottom:1px dashed #263446;padding:10px 0}
-    .stamp{display:flex;gap:6px;align-items:center;min-width:260px}
-    .chip{background:var(--tagbg);border:1px solid #263446;border-radius:999px;padding:2px 6px}
-    .chip.small{font-size:12px;color:#9aa8b6}
-    .name{color:#fff;font-weight:600}
-    .unread{outline:2px solid #2563eb; outline-offset:2px; border-radius:8px}
-    .toast{position:fixed;top:12px;left:50%;transform:translateX(-50%);background:#0b1220;border:1px solid #2e3b53;border-radius:10px;padding:8px 12px;z-index:90}
-
-    /* Role chips */
-    .role{display:inline-block;margin-left:8px;padding:4px 10px;border-radius:999px;border:1px solid #3b4760;background:var(--tagbg);font-size:12px}
-    .role.senior{border-color:#1d4ed8;color:#93c5fd}
-    .role.admin{border-color:#334155;color:#cbd5e1}
-    .role.team{border-color:#831843;color:#f472b6}
-    .role.mitarbeiter{border-color:#14532d;color:#86efac}
-    .role.einrichter{border-color:#92400e;color:#fdba74}
-    .role.leih{border-color:#374151;color:#d1d5db}
-
-    /* Header user line */
-    .userline{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-    .user-c1,.user-c2{padding:4px 8px;border-radius:8px;background:var(--tagbg);border:1px solid var(--line)}
-    .user-c2{border-style:dashed;opacity:.9}
-
-    /* Hovercard */
-    .hovercard{position:absolute; display:none; z-index:60; background:linear-gradient(180deg,var(--panel),var(--panel2)); border:1px solid var(--line); border-radius:12px; padding:10px; width:460px; box-shadow:0 20px 60px rgba(0,0,0,.35)}
-    .hovercard.open{display:flex; gap:12px}
-    .hovercard .ph{width:184px; height:184px; border-radius:10px; background:#0b1220 center/cover no-repeat; border:1px solid var(--line); cursor:pointer}
-
-    /* Orders meta layout */
-    .meta-grid{display:grid; grid-template-columns:140px 1fr; gap:8px 10px; align-items:center}
-    .value-cell{display:flex; align-items:center; gap:10px}
-    .dot{width:18px; height:18px; border-radius:50%; border:2px solid var(--line); cursor:pointer; background:#ffffff}
-    .nextauf{display:flex; justify-content:flex-end; align-items:center; gap:8px}
-
-    /* Carton 2x2 grid */
-    .carton{margin-top:10px}
-    .carton-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-    .carton-cell{position:relative;border:3px solid #2d3b54;border-radius:12px;height:72px;background:#0b1220;overflow:hidden;cursor:pointer}
-    .carton-fill{position:absolute;left:0;bottom:0;width:100%;height:0;background:linear-gradient(180deg,#22c55e,#14532d)}
-    .carton-label{position:absolute;top:6px;left:8px;font-size:12px;color:#cbd5e1}
-    .carton-active{outline:3px solid #22c55e; outline-offset:2px}
-
-    /* Footer admin */
-    .admin-footer{display:flex; justify-content:flex-end}
-    .admin-footer details{min-width:360px}
-    .admin-footer summary{cursor:pointer;list-style:none}
-    .admin-footer summary::-webkit-details-marker{display:none}
-
-    /* Modal (NewUser) */
-    .modalNU{position:fixed; inset:0; display:none; align-items:center; justify-content:center; z-index:70; background:rgba(0,0,0,.55)}
-    .modalNU.open{display:flex}
-    .modalNU .box{width:min(560px,92vw); background:linear-gradient(180deg,var(--panel),var(--panel2)); border:1px solid var(--line); border-radius:16px; box-shadow:0 20px 60px rgba(0,0,0,.45); padding:16px}
-
-    /* Lang chips */
-    .langs{display:flex; gap:6px; flex-wrap:wrap}
-    .lang{font-size:12px; padding:4px 8px; border-radius:999px; background:var(--tagbg); border:1px solid var(--line); cursor:pointer}
-
-    /* Font picker */
-    .fontsel{min-width:180px}
+    /* Notes & Plans */
+    .notes-list .row{display:flex;gap:10px;align-items:flex-start;border-bottom:1px dashed #263446;padding:8px 0}
+    .stamp{display:inline-flex;gap:6px;align-items:center}
+    .stamp .chip{background:#0b1220;border:1px solid #263446;border-radius:999px;padding:2px 6px}
+    .stamp .small{font-size:12px;color:#9aa8b6}
+    .stamp .digits{font-variant-numeric:tabular-nums;letter-spacing:.2px}
+    .notes-list .txt{flex:1}
+    .notes-list .act{display:flex;gap:6px}
+    .tag{display:inline-block;margin-left:6px;font-size:12px;padding:2px 6px;border-radius:999px;border:1px solid #3b4760}
+    .tag.draft{color:#eab308;border-color:#a16207;background:#2a2208}
+    /* Chat stream */
+    .alerts{display:flex;flex-wrap:wrap;gap:8px}
+    .alert{display:flex;gap:8px;align-items:center;border:1px solid #2e3b53;border-radius:10px;padding:6px 10px;background:#0b1220}
   </style>
 </head>
-<body class="theme-green">
-  <input id="avatarFile" type="file" accept="image/*" style="display:none">
+<body>
   <header class="wrap">
     <div class="panel">
       <div class="head">
-        <div class="userline">
-          <div id="userNameCell" class="user-c1"><span data-i18n="logged_as">Zalogowany jako:</span> <strong id="loginName">Kamil Kowalczyk</strong></div>
-          <div id="userUidCell" class="user-c2"><span id="loginId">SoG1917</span></div>
-          <span id="roleChip" class="role senior">Senior Developer</span>
-        </div>
-        <div class="flex items-center gap-2">
+        <div class="loginbar flex items-center gap-2">
+          <strong id="loginName">Zalogowany jako: Kamil Kowalczyk</strong> <small id="loginId">(SoG1917)</small>
           <select id="loginSelect" class="btn">
-            <option value="NEW">NewUser…</option>
-            <option value="SoG1917|Kamil Kowalczyk">SoG1917 — Kamil Kowalczyk</option>
-            <option value="SoG1|Michael Scott">SoG1 — Michael Scott</option>
-            <option value="SoG1899|James Corden">SoG1899 — James Corden</option>
-            <option value="SoP1|Piotr Nowak">SoP1 — Piotr Nowak</option>
-            <option value="SoG2025|John Locke">SoG2025 — John Locke</option>
-            <option value="2200|Hans Meier">2200 — Hans Meier</option>
-            <option value="2020|Anna Weber">2020 — Anna Weber</option>
-            <option value="LK12A|Markus Test">LK12A — Markus Test</option>
+            <option value="SoG1917|Kamil Kowalczyk">Kamil Kowalczyk (SoG1917)</option>
+            <option value="SoG1|Michael Scott">Michael Scott (SoG1)</option>
+            <option value="SoG1899|James Corden">James Corden (SoG1899)</option>
+            <option value="SoP1|Piotr Nowak">Piotr Nowak (SoP1)</option>
           </select>
-          <select id="themeSelect" class="btn">
-            <option value="light">Light</option>
-            <option value="green" selected>Green</option>
-            <option value="blue">Blue</option>
-            <option value="yellow">Yellow</option>
-          </select>
-          <select id="fontSelect" class="btn fontsel">
-            <option value="Inter">Inter</option>
-            <option value="Roboto">Roboto</option>
-            <option value="Open Sans">Open Sans</option>
-            <option value="Source Sans 3">Source Sans 3</option>
-            <option value="Noto Naskh Arabic">Noto Naskh Arabic (AR)</option>
-          </select>
-          <div class="badge">v0.007u</div>
+          <button id="loginBtn" class="btn">🔐 Zmień</button>
         </div>
+        <div class="badge">v0.007r</div>
       </div>
       <div class="body">
-        <div class="flex items-center justify-between gap-3 flex-wrap">
-          <h1 class="m-0">🏭 <span data-i18n="app_title">Kartonowy Napełniacz</span> <span class="text-xs opacity-70">(pure HTML)</span></h1>
-          <div class="flex items-center gap-2">
-            <div class="langs" id="langBar"></div>
-          </div>
-        </div>
-        <div id="statusLine" class="opacity-80 mt-1">Status: <span data-i18n="ready">gotowy</span></div>
+        <h1 class="m-0">🏭 Kartonowy Napełniacz <span class="text-xs opacity-70">(pure HTML)</span></h1>
+        <div id="statusLine" class="opacity-80 mt-1">Status: gotowy</div>
         <div id="chatStream" class="alerts mt-2"></div>
-      </div>
-    </div>
-    <div id="hovercard" class="hovercard" title="Kliknij zdjęcie, aby ustawić avatar">
-      <div class="ph" id="hoverImg"></div>
-      <div style="flex:1">
-        <div><strong data-i18n="full_name">Imię i nazwisko:</strong> <span id="hName"></span></div>
-        <div><strong data-i18n="role">Rola:</strong> <span id="hRole"></span></div>
-        <div><strong data-i18n="last_login">Ostatnio zalogowany:</strong> <span id="hLast"></span></div>
-        <div><strong data-i18n="assigned_machines">Przypisane maszyny:</strong> <span id="hMachines"></span></div>
       </div>
     </div>
   </header>
@@ -181,77 +76,28 @@
     <section id="machines" class="machines"></section>
 
     <section class="panel mt-3">
-      <div class="head"><h2 class="m-0" data-i18n="chat">💬 CHAT</h2></div>
+      <div class="head"><h2 class="m-0">🗒️ Notatki</h2></div>
       <div class="body">
         <div class="flex gap-2 flex-wrap">
-          <input id="noteInput" class="btn" style="flex:1" placeholder="Wpisz wiadomość...">
-          <button id="addNote" class="btn primary" data-i18n="send">Wyślij</button>
+          <input id="noteInput" class="btn" style="flex:1" placeholder="Wpisz notatkę… (SoG1917: będzie prośba o kod 0..1000)">
+          <button id="addNote" class="btn primary">+ Dodaj</button>
         </div>
         <div id="notesList" class="notes-list mt-2"></div>
       </div>
     </section>
 
     <section class="panel mt-3">
-      <div class="head"><h2 class="m-0" data-i18n="plans">📌 Dalsze plany</h2></div>
+      <div class="head"><h2 class="m-0">📌 Dalsze plany</h2></div>
       <div class="body">
         <div class="flex gap-2 flex-wrap">
           <input id="planInput" class="btn" style="flex:1" placeholder="Nowy pomysł / zadanie…">
-          <button id="addPlan" class="btn" data-i18n="add_plan">+ Dodaj plan</button>
-          <button id="refreshNP" class="btn ghost">↻</button>
+          <button id="addPlan" class="btn">+ Dodaj plan</button>
+          <button id="refreshNP" class="btn ghost">↻ Odśwież z MySQL</button>
         </div>
         <div id="plansList" class="notes-list mt-2"></div>
       </div>
     </section>
-
-    <footer class="wrap mt-3 admin-footer">
-      <details id="adminPanel">
-        <summary class="btn">🛠️ Panel Admina</summary>
-        <div class="panel mt-2">
-          <div class="head"><strong data-i18n="user_mgmt">Zarządzanie użytkownikami</strong></div>
-          <div class="body">
-            <div id="usersTable"></div>
-          </div>
-        </div>
-      </details>
-    </footer>
   </main>
-
-  <!-- NewUser modal -->
-  <div class="modalNU" id="nuModal">
-    <div class="box">
-      <h3 class="text-lg font-semibold mb-2" data-i18n="new_account">Nowe konto</h3>
-      <div class="grid grid-cols-1 gap-3">
-        <div>
-          <label class="block text-sm opacity-80 mb-1" data-i18n="login_label">Login (SoGxxxx / LK12... / 2200 / 2020)</label>
-          <input id="nuLogin" class="w-full btn" placeholder="np. SoG2026">
-        </div>
-        <div>
-          <label class="block text-sm opacity-80 mb-1" data-i18n="password">Hasło</label>
-          <input id="nuPass" type="password" class="w-full btn" placeholder="••••••••">
-        </div>
-        <div>
-          <label class="block text-sm opacity-80 mb-1" data-i18n="full_name">Imię i nazwisko:</label>
-          <input id="nuName" class="w-full btn" placeholder="np. Jan Kowalski">
-        </div>
-      </div>
-      <div class="mt-3 flex gap-2 justify-end">
-        <button id="nuCancel" class="btn" data-i18n="cancel">Anuluj</button>
-        <button id="nuCreate" class="btn primary" data-i18n="create_login">Utwórz i zaloguj</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Custom time modal -->
-  <div class="modal" id="timeModal">
-    <div class="box">
-      <h3 class="text-lg font-semibold mb-2">Ustaw pozostały czas (min)</h3>
-      <input id="timeMinutes" type="number" class="btn w-full" min="1" step="1" value="60">
-      <div class="mt-3 flex gap-2 justify-end">
-        <button id="tmCancel" class="btn">Anuluj</button>
-        <button id="tmSet" class="btn primary">Ustaw</button>
-      </div>
-    </div>
-  </div>
 
   <template id="tpl-machine">
     <article class="panel machine">
@@ -259,456 +105,180 @@
         <div class="title"><span>🤖</span><h2 class="code"></h2></div>
       </div>
       <div class="body">
-        <div class="meta meta-grid">
-          <div>Auftrag:</div>
-          <div class="value-cell"><span class="auf-val chip">1012xxxx</span></div>
-
-          <div>Model:</div>
-          <div class="value-cell"><span class="mdl-val chip">—</span> <span class="dot mdl-dot" title="Kolor modelu"></span></div>
-
-          <div>Okres:</div>
-          <div class="value-cell"><span class="period-val">—</span></div>
-
-          <div class="nextauf">Następny Auftrag:</div>
-          <div class="nextauf"><span class="nextauf-val">—</span> <span class="nextperiod-val opacity-70"></span></div>
-
-          <div class="nextauf">Do ukończenia:</div>
-          <div class="nextauf"><span class="remaining-val">—</span></div>
+        <div class="meta">
+          <div>Auftrag: <span class="auf-val">—</span></div>
+          <div>Model: <span class="mdl-val">—</span></div>
+          <div>Okres: <span class="period-val">—</span></div>
+          <div>Następny Auftrag: <span class="nextauf-val">—</span></div>
         </div>
 
-        <div class="progress mt-2"><div class="bar"></div><div class="label">0%</div></div>
+        <div class="progress"><div class="bar"></div><div class="label">0%</div></div>
 
         <div class="pruef">
-          <div class="pr-bar mt-2">
-            <div class="pr-fill"></div>
-            <div class="pr-label" title="PPM: ustaw czas">60:00</div>
-            <div class="pr-controls">
-              <span class="tag pr-opt" data-sec="3600">1H</span>
-              <span class="tag pr-opt" data-sec="7200">2H</span>
-              <span class="tag pr-opt" data-sec="10800">3H</span>
-              <span class="tag pr-opt" data-sec="custom">M</span>
-            </div>
-            <div class="pr-reset">Reset</div>
+          <div class="pr-head">🧪 Prüfung — czas:
+            <select class="pr-select">
+              <option value="3600">1h</option>
+              <option value="7200">2h</option>
+              <option value="10800">3h</option>
+              <option value="custom">ręcznie…</option>
+            </select>
+          </div>
+          <div class="pr-bar">
+            <div class="pr-fill"></div><div class="pr-label">60:00</div><div class="pr-reset">Reset</div>
           </div>
         </div>
-
-        <div class="carton">
-          <div class="carton-grid">
-            <div class="carton-cell"><div class="carton-fill"></div><div class="carton-label">#1</div></div>
-            <div class="carton-cell"><div class="carton-fill"></div><div class="carton-label">#2</div></div>
-            <div class="carton-cell"><div class="carton-fill"></div><div class="carton-label">#3</div></div>
-            <div class="carton-cell"><div class="carton-fill"></div><div class="carton-label">#4</div></div>
-          </div>
-        </div>
-
-        <details class="mt-3">
-          <summary class="btn">⚙️ Ustawienia</summary>
-          <div class="mt-2 grid grid-cols-2 gap-2">
-            <label class="text-sm opacity-75">Czas (min) <input class="set-dur btn w-full" type="number" min="1" step="1"></label>
-            <label class="text-sm opacity-75">Sztuk/karton <input class="set-pcs btn w-full" type="number" min="1" step="1" value="1250"></label>
-            <label class="text-sm opacity-75">Prüfung (sek) <input class="set-prs btn w-full" type="number" min="60" step="60"></label>
-            <label class="text-sm opacity-75">Model
-              <select class="set-model btn w-full">
-                <option>DASG-1 (201044)</option>
-                <option>K-11 (202880)</option>
-              </select>
-            </label>
-            <label class="text-sm opacity-75">Następny Auftrag <input class="set-next btn w-full" placeholder="1012xxxx"></label>
-          </div>
-          <div class="opacity-70 text-sm mt-1" data-i18n="press_enter">Wciśnij ENTER, aby zapisać.</div>
-        </details>
       </div>
     </article>
   </template>
 
   <script>
-    // --- i18n dictionaries
-    const I18N = {
-      PL:{ logged_as:'Zalogowany jako:', app_title:'Kartonowy Napełniacz', ready:'gotowy', chat:'💬 CHAT', plans:'📌 Dalsze plany', send:'Wyślij', add_plan:'+ Dodaj plan', new_account:'Nowe konto', login_label:'Login (SoGxxxx / LK12... / 2200 / 2020)', password:'Hasło', full_name:'Imię i nazwisko:', cancel:'Anuluj', create_login:'Utwórz i zaloguj', user_mgmt:'Zarządzanie użytkownikami', role:'Rola:', last_login:'Ostatnio zalogowany:', assigned_machines:'Przypisane maszyny:', press_enter:'Wciśnij ENTER, aby zapisać.' },
-      EN:{ logged_as:'Logged in as:', app_title:'Carton Filler', ready:'ready', chat:'💬 CHAT', plans:'📌 Next plans', send:'Send', add_plan:'+ Add plan', new_account:'New account', login_label:'Login (SoGxxxx / LK12... / 2200 / 2020)', password:'Password', full_name:'Full name:', cancel:'Cancel', create_login:'Create & login', user_mgmt:'User management', role:'Role:', last_login:'Last login:', assigned_machines:'Assigned machines:', press_enter:'Press ENTER to save.' },
-      DE:{ logged_as:'Angemeldet als:', app_title:'Kartonfüller', ready:'bereit', chat:'💬 CHAT', plans:'📌 Weitere Pläne', send:'Senden', add_plan:'+ Plan hinzufügen', new_account:'Neues Konto', login_label:'Login (SoGxxxx / LK12... / 2200 / 2020)', password:'Passwort', full_name:'Vollständiger Name:', cancel:'Abbrechen', create_login:'Erstellen & anmelden', user_mgmt:'Benutzerverwaltung', role:'Rolle:', last_login:'Zuletzt eingeloggt:', assigned_machines:'Zugeordnete Maschinen:', press_enter:'Mit ENTER speichern.' },
-      HR:{ logged_as:'Prijavljen kao:', app_title:'Punjač kartona', ready:'spremno', chat:'💬 CHAT', plans:'📌 Daljnji planovi', send:'Pošalji', add_plan:'+ Dodaj plan', new_account:'Novi račun', login_label:'Prijava (SoGxxxx / LK12... / 2200 / 2020)', password:'Lozinka', full_name:'Ime i prezime:', cancel:'Odustani', create_login:'Kreiraj i prijavi', user_mgmt:'Upravljanje korisnicima', role:'Uloga:', last_login:'Zadnja prijava:', assigned_machines:'Dodijeljeni strojevi:', press_enter:'Pritisni ENTER za spremanje.' },
-    };
-    const FALLBACK_LANG='EN';
-    const LANGS=['PL','DE','EN','HR','AR','UR','FA','PS'];
-    let currentLang = localStorage.getItem('KN_LANG') || 'PL';
-    function applyI18n(){
-      const d = (I18N[currentLang]||I18N[FALLBACK_LANG]);
-      document.querySelectorAll('[data-i18n]').forEach(el=>{ const k=el.getAttribute('data-i18n'); if(d[k]) el.textContent=d[k]; });
-      if(d.ready) document.querySelector('#statusLine [data-i18n="ready"]').textContent=d.ready;
-      // arabic-related font sizing
-      const ar = ['AR','UR','FA','PS'].includes(currentLang);
-      document.body.classList.toggle('lang-ar', ar);
-      // direction: simple LTR keep; (extend to RTL if needed)
-    }
-
-    // --- constants & storage helpers
+    // --- basic state
     const ORDERS_KEY='KN_ORDERS_V1';
     const NOTES_KEY='KN007_NOTES';
     const PLANS_KEY='KN007_PLANS';
-    const USERS_KEY='KN007_USERS';
-    const ADMIN_PASS=4753;
+    const ADMIN_PASS = 123; // kod 0..1000 wymagany do publikacji SoG1917
 
+    const DEFAULTS={
+      user:{uid:'SoG1917', name:'Kamil Kowalczyk'},
+      machines:[
+        { code:'MA820061', durationMin:25, pruef:3600 },
+        { code:'M820062',  durationMin:22, pruef:3600 },
+        { code:'MA820063', durationMin:25, pruef:3600 },
+        { code:'MA820064', durationMin:25, pruef:3600 },
+      ],
+      orders:{},
+    };
+    let CFG=JSON.parse(localStorage.getItem('KN007_CFG')||'null')||DEFAULTS;
     const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
-    function setStatusText(txtKey){ const span=$('#statusLine [data-i18n="ready"]'); span.textContent = (I18N[currentLang] && I18N[currentLang][txtKey]) || txtKey; }
+    const isAdmin=()=> CFG.user?.uid==='SoG1917';
+    function persist(){ localStorage.setItem('KN007_CFG', JSON.stringify(CFG)); }
+    function setStatus(t){ $('#statusLine').textContent='Status: '+t; }
 
+    // --- kv storage via php
     async function saveShared(key,json){ try{ const res=await fetch('storage.php?a=set&key='+encodeURIComponent(key),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(json)}); const j=await res.json(); return !!j.ok; }catch(e){ console.error(e); return false; } }
     async function loadShared(key){ try{ const res=await fetch('storage.php?a=get&key='+encodeURIComponent(key)); const j=await res.json(); return j.v?JSON.parse(j.v):null; }catch(e){ console.error(e); return null; } }
 
-    // --- themes & fonts & langs
-    function applyTheme(t){ document.body.classList.remove('theme-light','theme-green','theme-blue','theme-yellow'); document.body.classList.add('theme-'+t); localStorage.setItem('KN007_THEME', t); }
-    function initThemes(){ const t=localStorage.getItem('KN007_THEME')||'green'; $('#themeSelect').value=t; applyTheme(t); $('#themeSelect').onchange=()=> applyTheme($('#themeSelect').value); }
-    function applyFont(f){ document.documentElement.style.setProperty('--font', '"'+f+'", system-ui, Segoe UI, Roboto, Arial, sans-serif'); if(['Noto Naskh Arabic'].includes(f)){ document.documentElement.style.setProperty('--font-ar','"'+f+'", "Inter", system-ui'); } localStorage.setItem('KN007_FONT', f); }
-    function initFonts(){ const f=localStorage.getItem('KN007_FONT')||'Inter'; $('#fontSelect').value=f; applyFont(f); $('#fontSelect').onchange=()=> applyFont($('#fontSelect').value); }
-    function initLangs(){ const c=$('#langBar'); c.innerHTML=''; LANGS.forEach(l=>{ const chip=document.createElement('button'); chip.className='lang'; chip.textContent=l; chip.onclick=()=>{ currentLang=(l in I18N)?l:FALLBACK_LANG; localStorage.setItem('KN_LANG', currentLang); applyI18n(); }; c.appendChild(chip); }); applyI18n(); }
-
-    // --- users & roles
-    const DEFAULT_USERS=[
-      { uid:'SoG1917', name:'Kamil Kowalczyk', role:'Senior Developer', color:'senior' },
-      { uid:'SoG1', name:'Michael Scott', role:'Administrator', color:'admin' },
-      { uid:'SoG1899', name:'James Corden', role:'Administrator', color:'admin' },
-      { uid:'SoP1', name:'Piotr Nowak', role:'Administrator', color:'admin' },
-      { uid:'SoG2025', name:'John Locke', role:'TeamLeiter', color:'team' },
-      { uid:'2200', name:'Hans Meier', role:'Einrichter', color:'einrichter' },
-      { uid:'2020', name:'Anna Weber', role:'Einrichter', color:'einrichter' },
-      { uid:'LK12A', name:'Markus Test', role:'Leiharbeirter', color:'leih' },
-    ];
-    let USERS={}; // uid -> profile
-    let CURRENT={ uid:'SoG1917', name:'Kamil Kowalczyk' };
-
-    function roleFromUid(uid){
-      if(uid==='SoG1917') return {role:'Senior Developer', color:'senior'};
-      if(uid==='SoG2025') return {role:'TeamLeiter', color:'team'};
-      if(uid==='2200' || uid==='2020') return {role:'Einrichter', color:'einrichter'};
-      if(/^LK12/i.test(uid)) return {role:'Leiharbeirter', color:'leih'};
-      if(/^SoG/i.test(uid)) return {role:'Sanner Mitarbeiter', color:'mitarbeiter'};
-      return {role:'Administrator', color:'admin'};
-    }
-
-    function canEditAvatarsFor(uid){
-      if(uid===CURRENT.uid) return true;
-      const role=(USERS[CURRENT.uid]?.role)||'';
-      return ['Senior Developer','Administrator','TeamLeiter'].includes(role);
-    }
-
-    async function initUsers(){
-      const db=await loadShared(USERS_KEY);
-      if(db){ USERS=db; } else {
-        USERS = Object.fromEntries(DEFAULT_USERS.map(u=> [u.uid, {...u, last:Date.now(), img:null, machines:[]} ]));
-        await saveShared(USERS_KEY, USERS);
-      }
-      if(!USERS[CURRENT.uid]) USERS[CURRENT.uid]={uid:CURRENT.uid, name:CURRENT.name, ...roleFromUid(CURRENT.uid), last:Date.now(), img:null, machines:[]};
-      renderUserLine(); renderAdminUsers();
-    }
-
-    function renderUserLine(){
-      const p=USERS[CURRENT.uid]||{uid:CURRENT.uid, name:CURRENT.name, ...roleFromUid(CURRENT.uid)};
-      $('#loginName').textContent=p.name; $('#loginId').textContent=p.uid; // no parentheses
-      const chip=$('#roleChip'); chip.className='role '+(p.color||'admin'); chip.textContent=p.role;
-      $('#adminPanel').style.display = ['Senior Developer','Administrator','TeamLeiter'].includes(p.role) ? '' : 'none';
-    }
-
-    function renderAdminUsers(){
-      const box=$('#usersTable'); box.innerHTML='';
-      const tbl=document.createElement('table'); tbl.className='w-full text-sm';
-      tbl.innerHTML='<thead><tr><th class="text-left">UID</th><th class="text-left">Imię i nazwisko</th><th>Rola</th><th>Maszyny</th><th>Avatar</th><th>Akcje</th></tr></thead>';
-      const tb=document.createElement('tbody');
-      Object.values(USERS).forEach(u=>{
-        const tr=document.createElement('tr');
-        const imgBtn = document.createElement('button'); imgBtn.className='btn'; imgBtn.textContent='👤 Ustaw';
-        imgBtn.onclick=()=>{ if(!canEditAvatarsFor(u.uid)){ alert('Brak uprawnień do zmiany tego avatara'); return; } openAvatarPicker(u.uid); };
-        tr.innerHTML=`<td>${u.uid}</td><td><input class="btn w-full" value="${u.name||''}"></td>
-        <td>
-          <select class="btn">
-            <option ${u.role==='Senior Developer'?'selected':''}>Senior Developer</option>
-            <option ${u.role==='Administrator'?'selected':''}>Administrator</option>
-            <option ${u.role==='TeamLeiter'?'selected':''}>TeamLeiter</option>
-            <option ${u.role==='Sanner Mitarbeiter'?'selected':''}>Sanner Mitarbeiter</option>
-            <option ${u.role==='Einrichter'?'selected':''}>Einrichter</option>
-            <option ${u.role==='Leiharbeirter'?'selected':''}>Leiharbeirter</option>
-          </select>
-        </td>
-        <td><input class="btn w-full" value="${(u.machines||[]).join(', ')}" placeholder="np. MA820061, M820062"></td>
-        <td class="text-center">${u.img?'<span class="badge">✓</span>':'—'}</td>
-        <td><span class="avatar-slot"></span> <button class="btn">Zapisz</button></td>`;
-        const [nameI, roleS, machI, saveB, slot] = [ $('td:nth-child(2) input',tr), $('td:nth-child(3) select',tr), $('td:nth-child(4) input',tr), $('td:nth-child(6) button',tr), $('.avatar-slot',tr) ];
-        slot.appendChild(imgBtn);
-        saveB.onclick=async()=>{
-          u.name=nameI.value.trim()||u.name; u.role=roleS.value; u.machines = machI.value.split(',').map(s=>s.trim()).filter(Boolean);
-          u.color = (u.role==='Senior Developer')?'senior': (u.role==='TeamLeiter')?'team': (u.role==='Sanner Mitarbeiter')?'mitarbeiter': (u.role==='Einrichter')?'einrichter': (u.role==='Leiharbeirter')?'leih' : 'admin';
-          await saveShared(USERS_KEY, USERS); if(u.uid===CURRENT.uid) renderUserLine(); setStatusText('ready');
-        };
-        tb.appendChild(tr);
-      });
-      tbl.appendChild(tb); box.appendChild(tbl);
-    }
-
-    function loginAs(uid,name){
-      CURRENT={uid,name}; if(!USERS[uid]) USERS[uid]={uid,name, ...roleFromUid(uid), last:Date.now(), img:null, machines:[]};
-      USERS[uid].last=Date.now(); saveShared(USERS_KEY, USERS); renderUserLine(); renderHoverAttach();
-      setStatusText('ready');
-    }
-
-    function initLoginSelect(){
-      $('#loginSelect').onchange=(e)=>{
-        const v=e.target.value;
-        if(v==='NEW'){ openNewUserModal(); return; }
-        const [uid,name]=v.split('|');
-        loginAs(uid,name);
-      };
-    }
-
-    // --- hovercard & avatar upload
-    function fmtTs(ts){ const d=new Date(ts); const dd=String(d.getDate()).padStart(2,'0'), mm=String(d.getMonth()+1).padStart(2,'0'), yyyy=d.getFullYear(), hh=String(d.getHours()).padStart(2,'0'), mi=String(d.getMinutes()).padStart(2,'0'); return `${dd}/${mm}/${yyyy} ${hh}:${mi}`; }
-    let avatarTargetUid=null;
-    function renderHoverAttach(){
-      const targetName=$('#userNameCell'), targetUid=$('#userUidCell'); const card=$('#hovercard');
-      function show(){ const p=USERS[CURRENT.uid]; $('#hName').textContent=p.name; $('#hRole').textContent=p.role; $('#hLast').textContent=fmtTs(p.last||Date.now()); $('#hMachines').textContent=(p.machines||[]).join(', ')||'—';
-        const fallbackSvg="data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22184%22 height=%22184%22><rect width=%22184%22 height=%22184%22 rx=%2212%22 fill=%22%23121a2a%22/><text x=%2250%25%22 y=%2255%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 fill=%22%23fff%22 font-family=%22system-ui%22 font-size=%2242%22>"+(p.name?.[0]||'U')+"</text></svg>";
-        $('#hoverImg').style.backgroundImage = `url('${p.img||fallbackSvg}')`;
-        const rect=targetName.getBoundingClientRect(); card.style.top=(rect.bottom+6+window.scrollY)+'px'; card.style.left=(rect.left+window.scrollX)+'px'; card.classList.add('open'); }
-      function hide(){ card.classList.remove('open'); }
-      [targetName,targetUid].forEach(el=>{ el.onmouseenter=show; el.onmouseleave=hide; });
-      card.onmouseenter=()=>card.classList.add('open'); card.onmouseleave=hide;
-      $('#hoverImg').onclick=()=>{ if(!canEditAvatarsFor(CURRENT.uid)){ alert('Brak uprawnień.'); return; } openAvatarPicker(CURRENT.uid); };
-    }
-    function openAvatarPicker(uid){ avatarTargetUid=uid; $('#avatarFile').value=''; $('#avatarFile').click(); }
-    $('#avatarFile').addEventListener('change', async (ev)=>{
-      const f=ev.target.files?.[0]; if(!f) return;
-      if(!/^image\//.test(f.type)){ alert('Wybierz plik obrazu.'); return; }
-      const rd=new FileReader();
-      rd.onload=async ()=>{ USERS[avatarTargetUid]=USERS[avatarTargetUid]||{uid:avatarTargetUid, ...roleFromUid(avatarTargetUid)}; USERS[avatarTargetUid].img=rd.result; await saveShared(USERS_KEY, USERS); renderHoverAttach(); renderAdminUsers(); setStatusText('ready'); };
-      rd.readAsDataURL(f);
-    });
-
-    // --- NewUser modal
-    function openNewUserModal(){ $('#nuModal').classList.add('open'); $('#nuLogin').focus(); }
-    function closeNewUserModal(){ $('#nuModal').classList.remove('open'); }
-    function initNewUserModal(){
-      $('#nuCancel').onclick=closeNewUserModal;
-      $('#nuCreate').onclick=async()=>{
-        const uid=$('#nuLogin').value.trim(); const pass=$('#nuPass').value; const name=$('#nuName').value.trim();
-        if(!uid || !name){ alert('Podaj login i imię nazwisko'); return; }
-        if(!/^(SoG\d{1,}|LK12.*|2200|2020|SoP\d+)/i.test(uid)){ alert('Login musi wyglądać jak SoGxxxx, LK12..., 2200, 2020 lub SoP...'); return; }
-        const base=roleFromUid(uid); USERS[uid]={uid,name,role:base.role,color:base.color,last:Date.now(),img:null,machines:[]};
-        await saveShared(USERS_KEY, USERS);
-        const opt=document.createElement('option'); opt.value=uid+'|'+name; opt.textContent=uid+' — '+name; $('#loginSelect').appendChild(opt); $('#loginSelect').value=uid+'|'+name;
-        closeNewUserModal(); loginAs(uid,name);
-      };
-    }
-
-    // --- stamps & toast
-    function toast(msg){ const t=document.createElement('div'); t.className='toast'; t.textContent=msg; document.body.appendChild(t); setTimeout(()=>t.remove(), 3000); }
-    function makeStamp(ts,user,smaller=false){
-      const d=new Date(ts);
-      const dd=String(d.getDate()).padStart(2,'0'), mm=String(d.getMonth()+1).padStart(2,'0'), yyyy=d.getFullYear();
-      const hh=String(d.getHours()).padStart(2,'0'), min=String(d.getMinutes()).padStart(2,'0');
-      const stamp=`[${dd}/${mm}/${yyyy} ${hh}:${min}]`;
-      return `<span class="chip small">${stamp}</span>
-              <span class="chip small">${user.uid}</span>`;
-    }
-
-    // --- chat (notes)
-    let NOTES=[], PLANS=[];
-    async function saveNotes(){ await saveShared(NOTES_KEY, NOTES); }
-    async function savePlans(){ await saveShared(PLANS_KEY, PLANS); }
-    async function loadNotes(){ const db=await loadShared(NOTES_KEY); if(db){ NOTES=db; } renderNotes(); }
-    async function loadPlans(){ const db=await loadShared(PLANS_KEY); if(db){ PLANS=db; } renderPlans(); }
-
-    function appendNoteRow(n){
-      const row=document.createElement('div'); row.className='row unread';
-      row.innerHTML=`<div class="stamp">${makeStamp(n.ts, {uid:n.user,name:n.userName})}</div>
-                     <div class="txt"><span class="name">${n.userName}:</span> ${n.text}</div>
-                     <div class="act"></div>`;
-      const act=$('.act',row);
-      // Reply
-      const bR=document.createElement('button'); bR.className='btn'; bR.textContent='↩️';
-      bR.onclick=async()=>{ const v=prompt('Odpowiedź', ''); if(v){ const reply={id:Date.now()+Math.random(), ts:Date.now(), user:CURRENT.uid, userName:USERS[CURRENT.uid].name, text:v, status:'FINAL', parent:n.id}; NOTES.push(reply); await saveNotes(); renderNotes(); } };
-      act.appendChild(bR);
-      if(CURRENT.uid==='SoG1917'){
-        const bE=document.createElement('button'); bE.className='btn'; bE.textContent='✏️';
-        const bD=document.createElement('button'); bD.className='btn'; bD.textContent='🗑️';
-        bE.onclick=async()=>{ const v=prompt('Edytuj', n.text); if(v!=null){ n.text=v; await saveNotes(); renderNotes(); } };
-        bD.onclick=async()=>{ if(confirm('Usunąć?')){ NOTES = NOTES.filter(x=>x.id!==n.id && x.parent!==n.id); await saveNotes(); renderNotes(); } };
-        act.append(bE,bD);
-      }
-      // replies under
-      if(n.parent){ row.style.marginLeft='24px'; }
-      setTimeout(()=>row.classList.remove('unread'), 2000);
-      return row;
-    }
-
-    function renderNotes(){
-      const list=$('#notesList'); list.innerHTML='';
-      const roots = NOTES.filter(n=>!n.parent).sort((a,b)=>a.ts-b.ts);
-      roots.forEach(n=>{
-        list.appendChild(appendNoteRow(n));
-        NOTES.filter(x=>x.parent===n.id).sort((a,b)=>a.ts-b.ts).forEach(r=> list.appendChild(appendNoteRow(r)));
-      });
-    }
-
-    function initNotes(){
-      const send=async()=>{
-        const v=$('#noteInput').value.trim(); if(!v) return;
-        let status='FINAL';
-        if(CURRENT.uid==='SoG1917'){
-          const code=prompt('Kod (0..9999). 4753 publikuje do powiadomień.','');
-          const n=parseInt(code,10);
-          if(n!==4753) status='FINAL'; else { toast('Nowa wiadomość: '+v); }
-        }
-        const msg={id:Date.now()+Math.random(), ts:Date.now(), user:CURRENT.uid, userName:USERS[CURRENT.uid].name, text:v, status};
-        NOTES.push(msg);
-        $('#noteInput').value=''; await saveNotes(); renderNotes();
-      };
-      $('#addNote').onclick=send;
-      $('#noteInput').addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); $('#addNote').click(); }});
-    }
-
-    // --- plans
-    function renderPlans(){
-      const list=$('#plansList'); list.innerHTML='';
-      PLANS.forEach(p=>{
-        const row=document.createElement('div'); row.className='row';
-        row.innerHTML=`<div class="stamp">${makeStamp(p.ts, {uid:p.user,name:p.userName}, true)}</div>
-                       <div class="txt">${p.text}</div>
-                       <div class="act"></div>`;
-        const act=$('.act',row);
-        if(CURRENT.uid==='SoG1917'){
-          const bE=document.createElement('button'); bE.className='btn'; bE.textContent='✏️';
-          const bD=document.createElement('button'); bD.className='btn'; bD.textContent='🗑️';
-          bE.onclick=async()=>{ const v=prompt('Edytuj plan', p.text); if(v!=null){ p.text=v; await savePlans(); renderPlans(); } };
-          bD.onclick=async()=>{ if(confirm('Usunąć plan?')){ PLANS = PLANS.filter(x=>x.id!==p.id); await savePlans(); renderPlans(); } };
-          act.append(bE,bD);
-        }
-        list.appendChild(row);
-      });
-    }
-
-    function initPlans(){
-      $('#addPlan').onclick=async()=>{
-        const v=$('#planInput').value.trim(); if(!v) return;
-        PLANS.push({id:Date.now()+Math.random(), ts:Date.now(), user:CURRENT.uid, userName:USERS[CURRENT.uid].name, text:v});
-        $('#planInput').value=''; await savePlans(); renderPlans();
-      };
-      $('#refreshNP').onclick=async()=>{ await loadNotes(); await loadPlans(); };
-    }
-
-    // --- machines
-    const DEFAULT_MACH=[
-      { code:'MA820061', durationMin:25, pruef:3600 },
-      { code:'M820062',  durationMin:22, pruef:3600 },
-      { code:'MA820063', durationMin:25, pruef:3600 },
-      { code:'MA820064', durationMin:25, pruef:3600 },
-    ];
-
-    class Pruefung{
-      constructor(root){ this.root=root; this.fill=$('.pr-fill',root); this.label=$('.pr-label',root); this.reset=$('.pr-reset',root);
-        this.total=3600; this.start=Date.now(); this.bind(); this.tick(); this.renderOptions(); }
-      controls(){ return $$('.pr-opt', this.root); }
-      renderOptions(){ this.controls().forEach(o=>o.classList.remove('active')); const active=this.controls().find(o=>parseInt(o.dataset.sec||'0',10)===this.total); if(active) active.classList.add('active'); }
-      bind(){
-        this.controls().forEach(btn=>{
-          btn.addEventListener('click',()=>{
-            const v=btn.dataset.sec;
-            if(v==='custom'){ openTimeModal((mins)=>{ this.setTotal(mins*60); }); }
-            else{ this.setTotal(parseInt(v,10)); }
-          });
-        });
-        this.reset.addEventListener('click',()=>{ this.start=Date.now(); });
-        this.label.addEventListener('contextmenu',(e)=>{ e.preventDefault(); openTimeModal((mins)=>{ this.setTotal(mins*60); }); });
-      }
-      setTotal(sec){ this.total=Math.max(60,sec); this.start=Date.now(); this.renderOptions(); }
-      tick(){ const el=Math.min(this.total, Math.floor((Date.now()-this.start)/1000)); const left=this.total-el; const pct=Math.max(0,Math.min(100, Math.floor(el/this.total*100)));
+    // --- machines (minimal for 0.007 look)
+    class Pruefung{ constructor(root){ this.root=root; this.fill=$('.pr-fill',root); this.label=$('.pr-label',root); this.sel=$('.pr-select',root); this.reset=$('.pr-reset',root);
+        this.total=3600; this.start=Date.now(); this.bind(); this.tick(); }
+      bind(){ this.sel.addEventListener('change',()=>{ const v=this.sel.value; if(v==='custom'){ const m=prompt('Minuty:', '60'); this.total=Math.max(60,(parseInt(m,10)||60)*60); } else { this.total=parseInt(v,10); } this.start=Date.now(); });
+        this.reset.addEventListener('click',()=>{ this.start=Date.now(); }); }
+      tick(){ const el=Math.min(this.total, Math.floor((Date.now()-this.start)/1000)); const left=this.total-el; const pct=Math.floor(el/this.total*100);
         this.fill.style.width=pct+'%'; const mm=String(Math.floor(left/60)).padStart(2,'0'), ss=String(left%60).padStart(2,'0'); this.label.textContent=`${mm}:${ss}`;
         requestAnimationFrame(()=>this.tick()); }
     }
 
-    function openTimeModal(cb){ const m=$('#timeModal'); const inp=$('#timeMinutes'); m.classList.add('open'); inp.focus(); const ok=()=>{ const v=Math.max(1, parseInt(inp.value||'60',10)); m.classList.remove('open'); cb(v); }; $('#tmSet').onclick=ok; $('#tmCancel').onclick=()=>m.classList.remove('open'); document.onkeydown=(e)=>{ if(e.key==='Escape'){ m.classList.remove('open'); document.onkeydown=null; } if(e.key==='Enter'){ ok(); document.onkeydown=null; } }; }
-
-    function genAuftrag(){ return '1012'+String(Math.floor(Math.random()*10000)).padStart(4,'0'); }
-    function genPeriod(start=new Date(), days=5){ const s=new Date(start); const e=new Date(start); e.setDate(s.getDate()+days); const F=d=>`${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}.${d.getFullYear()}`; return `od ${F(s)} do ${F(e)}`; }
-    function genNextPeriod(){ const s=new Date(); s.setDate(s.getDate()+Math.floor(Math.random()*3)+1); const days=Math.floor(Math.random()*5)+2; return genPeriod(s, days); }
-    function genRemaining(){ const h=Math.floor(Math.random()*3); const m=Math.floor(Math.random()*59); return `${h}h ${String(m).padStart(2,'0')}m`; }
-
-    class Machine{
-      constructor(container,data,orders){
-        this.data=data; this.root=$('#tpl-machine').content.firstElementChild.cloneNode(true);
+    class Machine{ constructor(container,data,orders){ this.root=$('#tpl-machine').content.firstElementChild.cloneNode(true);
         this.code=data.code; $('.code',this.root).textContent=this.code;
-        const meta=orders?.[this.code]||{auftrag:genAuftrag(), model:'DASG-1 (201044)', period:genPeriod(), next:genAuftrag(), nextperiod:genNextPeriod(), remaining:genRemaining()};
-        this.auf=$('.auf-val',this.root); this.mdl=$('.mdl-val',this.root); this.period=$('.period-val',this.root);
-        this.nextauf=$('.nextauf-val',this.root); this.nextperiod=$('.nextperiod-val',this.root); this.mdlDot=$('.mdl-dot',this.root); this.remaining=$('.remaining-val',this.root);
-
-        this.auf.textContent=meta.auftrag; this.mdl.textContent=meta.model; this.period.textContent=meta.period; this.nextauf.textContent=meta.next; this.nextperiod.textContent=meta.nextperiod; this.remaining.textContent=meta.remaining;
-
-        // model color dot (RMB to change), default white
-        const COLORS=['#ffffff','#22c55e','#38bdf8','#f59e0b','#ef4444','#a78bfa','#10b981','#eab308'];
-        let currentColor = localStorage.getItem('MODEL_DOT_'+this.code) || COLORS[0];
-        this.mdlDot.style.background=currentColor;
-        this.mdlDot.addEventListener('contextmenu',(e)=>{ e.preventDefault(); const i = (COLORS.indexOf(currentColor)+1)%COLORS.length; currentColor=COLORS[i]; this.mdlDot.style.background=currentColor; localStorage.setItem('MODEL_DOT_'+this.code, currentColor); });
-
-        // Prüfung
-        this.pr=new Pruefung($('.pr-bar',this.root));
-
-        // progress
+        const o=orders[this.code]||genOrder(); $('.auf-val',this.root).textContent=o.auftrag; $('.mdl-val',this.root).textContent=o.model; $('.period-val',this.root).textContent=o.period; $('.nextauf-val',this.root).textContent=o.next||'—';
         this.bar=$('.bar',this.root); this.label=$('.label',this.root);
-        this.progressStart=performance.now(); this.duration=(data.durationMin||25)*60000;
-        const step=()=>{ const p=Math.min(1,(performance.now()-this.progressStart)/this.duration); this.bar.style.width=(p*100)+'%'; this.label.textContent=Math.floor(p*100)+'%'; this.updateCartons(p); requestAnimationFrame(step) }; requestAnimationFrame(step);
+        container.appendChild(this.root); this.pr=new Pruefung($('.pruef',this.root));
+        // simple progress demo
+        let start=performance.now(), dur=(data.durationMin||25)*60000; const step=()=>{ const p=Math.min(1,(performance.now()-start)/dur); this.bar.style.width=(p*100)+'%'; this.label.textContent=Math.floor(p*100)+'%'; requestAnimationFrame(step) }; requestAnimationFrame(step);
+    } }
 
-        // settings
-        this.sDur=$('.set-dur',this.root); this.sPcs=$('.set-pcs',this.root); this.sPrs=$('.set-prs',this.root); this.sModel=$('.set-model',this.root); this.sNext=$('.set-next',this.root);
-        this.sDur.value=data.durationMin||25; this.sPrs.value=data.pruef||3600; this.sModel.value=meta.model; this.sNext.value=meta.next;
-
-        // carton grid setup
-        this.cartCells=$$('.carton-cell',this.root); this.activeIdx=0;
-        this.cartCells.forEach((c,i)=>{
-          if(i===0) c.classList.add('carton-active');
-          c.addEventListener('contextmenu',(e)=>{ e.preventDefault(); const lbl=$('.carton-label',c); const v=prompt('Etykieta kartonu (#):', lbl.textContent); if(v!=null) lbl.textContent=v; });
-        });
-
-        // persist & reset rules
-        this.loadPersist();
-        const handleEnter = async (ev)=>{ if(ev.key==='Enter'){ ev.preventDefault(); const changedField = ev.target.className;
-            await this.savePersist();
-            if(!ev.target.classList.contains('set-next') && !ev.target.classList.contains('set-prs')){ this.resetProgress(); }
-        }};
-        [this.sDur,this.sPcs,this.sPrs,this.sModel,this.sNext].forEach(el=> el.addEventListener('keydown', handleEnter));
-
-        container.appendChild(this.root);
-      }
-      key(){ return 'KN007U_MACHINE_'+this.code; }
-      async loadPersist(){ const db=await loadShared(this.key()); if(!db) return;
-        this.sDur.value=db.durationMin||this.sDur.value; this.sPcs.value=db.pieces||this.sPcs.value; this.sPrs.value=db.pruef||this.sPrs.value; this.sModel.value=db.model||this.sModel.value; this.sNext.value=db.next||this.sNext.value;
-      }
-      async savePersist(){ const cfg={ durationMin:parseInt(this.sDur.value||'25'), pieces:parseInt(this.sPcs.value||'1250'), pruef:parseInt(this.sPrs.value||'3600'), model:this.sModel.value, next:this.sNext.value.trim() };
-        const ok=await saveShared(this.key(), cfg); }
-      resetProgress(){ this.progressStart=performance.now(); this.duration=(parseInt(this.sDur.value||'25'))*60000; this.activeIdx=0; this.cartCells.forEach((c,i)=>{c.classList.toggle('carton-active', i===0); $('.carton-fill',c).style.height='0%';}); }
-      updateCartons(p){ const total = 4; const per=1/total; const idx=Math.min(total-1, Math.floor(p/per)); if(idx!==this.activeIdx){ this.cartCells[this.activeIdx]?.classList.remove('carton-active'); this.activeIdx=idx; this.cartCells[this.activeIdx]?.classList.add('carton-active'); }
-        const localProg = (p - idx*per)/per; const h=Math.max(0,Math.min(100, Math.floor(localProg*100))); const fill=$('.carton-fill', this.cartCells[this.activeIdx]); if(fill) fill.style.height=h+'%'; }
+    function genOrder(){ const rnd=String(Math.floor(Math.random()*10000)).padStart(4,'0'); const s=new Date(); const e=new Date(); e.setDate(s.getDate()+5);
+      const F=d=>`${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}.${d.getFullYear()}`;
+      return { auftrag:'1012'+rnd, model:'DASG-1 (201044)', period:`od ${F(s)} do ${F(e)}`, next:'' };
     }
 
-    async function renderMachines(){
-      const box=$('#machines'); box.innerHTML='';
-      const orders = await loadShared(ORDERS_KEY) || {};
-      DEFAULT_MACH.forEach(m=> new Machine(box,m,orders));
+    function renderMachines(){ const box=$('#machines'); box.innerHTML=''; (CFG.machines||[]).forEach(m=> new Machine(box,m, CFG.orders||{})); }
+
+    // --- stamps
+    function makeStamp(ts,user,smaller=false){
+      const d=new Date(ts);
+      const dd=String(d.getDate()).padStart(2,'0'), mm=String(d.getMonth()+1).padStart(2,'0'), yyyy=d.getFullYear();
+      const hh=String(d.getHours()).padStart(2,'0'), min=String(d.getMinutes()).padStart(2,'0');
+      const small=smaller?' small':'';
+      return `<span class="stamp">
+        <span class="chip small digits${small}">[${dd}/${mm}/${yyyy}]</span>
+        <span class="chip small digits${small}">[${hh}:${min}]</span>
+        <span class="chip small">${user.uid} (${user.name})</span>
+      </span>`;
     }
 
-    // --- init
-    function populateSelect(){
-      const sel=$('#loginSelect');
-      const first=sel.firstElementChild; sel.innerHTML=''; sel.appendChild(first);
-      Object.values(USERS).forEach(u=>{ const opt=document.createElement('option'); opt.value=u.uid+'|'+u.name; opt.textContent=u.uid+' — '+u.name; sel.appendChild(opt); });
-      sel.value=CURRENT.uid+'|'+USERS[CURRENT.uid].name;
+    // --- chat stream
+    function chatPush(text){ const el=document.createElement('div'); el.className='alert'; el.innerHTML=`<span>💬 ${text}</span> <button class="btn ghost">✖</button>`; $('.btn',el).onclick=()=>el.remove(); $('#chatStream').prepend(el); }
+
+    // --- notes / plans
+    let NOTES=[], PLANS=[];
+    function renderNotes(){
+      const list=$('#notesList'); list.innerHTML='';
+      NOTES.forEach(n=>{
+        const row=document.createElement('div'); row.className='row';
+        const tag = n.status==='DRAFT' ? '<span class="tag draft">DRAFT</span>' : '';
+        row.innerHTML=`<div class="meta">${makeStamp(n.ts, {uid:n.user,name:n.userName})} ${tag}</div>
+                       <div class="txt">${n.text}</div>
+                       <div class="act"></div>`;
+        const act=$('.act',row);
+        if(isAdmin()){
+          const bE=document.createElement('button'); bE.className='btn'; bE.textContent='✏️'; bE.title='Edytuj';
+          const bR=document.createElement('button'); bR.className='btn'; bR.textContent='↩️'; bR.title='Odpowiedz';
+          const bD=document.createElement('button'); bD.className='btn'; bD.textContent='🗑️'; bD.title='Usuń';
+          bE.onclick=async()=>{ const v=prompt('Edytuj notatkę', n.text); if(v!=null){ n.text=v; await saveNotes(); renderNotes(); } };
+          bR.onclick=async()=>{ const v=prompt('Odpowiedź', ''); if(v){ NOTES.push({id:Date.now()+Math.random(), ts:Date.now(), user:CFG.user.uid, userName:CFG.user.name, text:`↪ ${v} (odpowiedź na #${n.id})`, status:'FINAL'}); await saveNotes(); renderNotes(); } };
+          bD.onclick=async()=>{ if(confirm('Usunąć notatkę?')){ NOTES = NOTES.filter(x=>x.id!==n.id); await saveNotes(); renderNotes(); } };
+          act.append(bE,bR,bD);
+        }
+        list.appendChild(row);
+      });
+    }
+    function renderPlans(){
+      const list=$('#plansList'); list.innerHTML='';
+      PLANS.forEach(p=>{
+        const row=document.createElement('div'); row.className='row';
+        row.innerHTML=`<div class="meta">${makeStamp(p.ts, {uid:p.user,name:p.userName}, true)}</div>
+                       <div class="txt">${p.text}</div>`;
+        list.appendChild(row);
+      });
+    }
+    async function saveNotes(){ await saveShared(NOTES_KEY, NOTES); }
+    async function loadNotes(){ const db=await loadShared(NOTES_KEY); if(db){ NOTES=db; } renderNotes(); }
+    async function savePlans(){ await saveShared(PLANS_KEY, PLANS); }
+    async function loadPlans(){ const db=await loadShared(PLANS_KEY); if(db){ PLANS=db; } renderPlans(); }
+
+    // --- login
+    function showUser(){ $('#loginName').textContent='Zalogowany jako: '+(CFG.user?.name||'nieznany'); $('#loginId').textContent=CFG.user?.uid?`(${CFG.user.uid})`:'(nieznany)'; }
+    function initLogin(){
+      showUser();
+      $('#loginBtn').onclick=()=>{
+        const sel=$('#loginSelect').value; const [uid,name]=sel.split('|');
+        const pass=prompt(`Hasło dla ${name} (${uid}):`,''); if(!pass){ showUser({}); return; }
+        CFG.user={uid,name}; persist(); showUser();
+      };
     }
 
-    async function init(){
-      initThemes(); initFonts(); initLangs();
-      await initUsers();
-      populateSelect(); initLoginSelect(); initNewUserModal(); renderHoverAttach();
-      await renderMachines();
-      initNotes(); initPlans();
-      await loadNotes(); await loadPlans();
-      setStatusText('ready');
+    // --- init buttons
+    function initNotesPlans(){
+      $('#addNote').onclick=async()=>{
+        const v=$('#noteInput').value.trim(); if(!v) return;
+        let status='FINAL';
+        if(isAdmin()){
+          const code=prompt('Podaj kod (0..1000) aby opublikować do „chat”. Błędny -> DRAFT:','');
+          const n = parseInt(code,10);
+          if(!(n>=0 && n<=1000) || n!==ADMIN_PASS){
+            status='DRAFT';
+          } else {
+            status='FINAL';
+            chatPush(v);
+          }
+        }
+        NOTES.push({id:Date.now()+Math.random(), ts:Date.now(), user:CFG.user.uid, userName:CFG.user.name, text:v, status});
+        $('#noteInput').value=''; await saveNotes(); renderNotes();
+      };
+      $('#addPlan').onclick=async()=>{
+        const v=$('#planInput').value.trim(); if(!v) return;
+        PLANS.push({id:Date.now()+Math.random(), ts:Date.now(), user:CFG.user.uid, userName:CFG.user.name, text:v});
+        $('#planInput').value=''; await savePlans(); renderPlans();
+      };
+      $('#refreshNP').onclick=async()=>{ await loadNotes(); await loadPlans(); };
+      loadNotes(); loadPlans();
     }
+
+    // --- machines render
+    function initMachines(){ const box=$('#machines'); box.innerHTML=''; (CFG.machines||[]).forEach(m=> new Machine(box,m, CFG.orders||{})); }
+
+    function init(){ initMachines(); initLogin(); initNotesPlans(); setStatus('gotowy'); }
     init();
   </script>
 </body>
