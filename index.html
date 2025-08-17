@@ -3,12 +3,16 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Kartonowy Napełniacz — v0.007r</title>
+  <title>Kartonowy Napełniacz — v0.009-alpha</title>
   <link rel="icon" href="favicon.ico">
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
   <style>
     :root{ --bg:#0e1117; --panel:#121826; --panel2:#0f1624; --text:#e5e7eb; --muted:#93a4b5; --accent:#22c55e; --line:#1f2937; --yellow:#fde047; }
-    body{margin:0;background:linear-gradient(180deg,var(--panel),var(--panel2));color:var(--text);font:15px/1.45 system-ui,Segoe UI,Roboto,Arial,sans-serif}
+    body[data-theme="light"] { --bg:#f3f4f6; --panel:#ffffff; --panel2:#f9fafb; --text:#111827; --muted:#6b7280; --accent:#16a34a; --line:#e5e7eb; }
+    body[data-theme="blue"] { --bg:#0c1424; --panel:#101c36; --panel2:#0e1a31; --text:#e0e7ff; --muted:#a0b3d9; --accent:#60a5fa; --line:#1e294b; }
+    body[data-theme="green"] { --bg:#052e16; --panel:#064e3b; --panel2:#043a2c; --text:#ecfdf5; --muted:#a7f3d0; --accent:#4ade80; --line:#022c22; }
+    body{margin:0;background:linear-gradient(180deg,var(--panel),var(--panel2));color:var(--text);font:16px/1.45 system-ui,Segoe UI,Roboto,Arial,sans-serif; transition: background .3s, color .3s;}
     .wrap{max-width:1200px;margin:auto;padding:12px 16px}
     .panel{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
     .head{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--line)}
@@ -25,261 +29,176 @@
     .progress{margin-top:6px;height:18px;border:1px solid var(--line);border-radius:12px;background:#0b1220;position:relative;overflow:hidden}
     .progress .bar{position:absolute;inset:0 100% 0 0;background:linear-gradient(90deg,#22c55e,#86efac);transition:width .25s ease}
     .progress .label{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:12px}
-    /* Prüfung bigger + themed select with yellow text */
     .pruef{margin-top:10px}
     .pr-head{display:flex;gap:8px;align-items:center;margin-bottom:6px}
-    .pr-head select.pr-select{background:var(--panel2);border:1px solid var(--line);color:var(--yellow);padding:8px 10px;border-radius:10px}
     .pr-bar{position:relative;height:68px;border:1px solid var(--line);border-radius:14px;background:#0b1220;overflow:hidden}
     .pr-fill{position:absolute;left:0;top:0;bottom:0;width:0%;background:linear-gradient(90deg,#22c55e,#84cc16);transition:width .5s linear}
     .pr-label{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:700;letter-spacing:.3px}
     .pr-reset{position:absolute;right:10px;top:50%;transform:translateY(-50%);border:1px solid var(--line);background:var(--panel2);border-radius:8px;padding:4px 8px;cursor:pointer}
-    /* Notes & Plans */
     .notes-list .row{display:flex;gap:10px;align-items:flex-start;border-bottom:1px dashed #263446;padding:8px 0}
     .stamp{display:inline-flex;gap:6px;align-items:center}
     .stamp .chip{background:#0b1220;border:1px solid #263446;border-radius:999px;padding:2px 6px}
     .stamp .small{font-size:12px;color:#9aa8b6}
     .stamp .digits{font-variant-numeric:tabular-nums;letter-spacing:.2px}
-    .notes-list .txt{flex:1}
-    .notes-list .act{display:flex;gap:6px}
-    .tag{display:inline-block;margin-left:6px;font-size:12px;padding:2px 6px;border-radius:999px;border:1px solid #3b4760}
-    .tag.draft{color:#eab308;border-color:#a16207;background:#2a2208}
-    /* Chat stream */
-    .alerts{display:flex;flex-wrap:wrap;gap:8px}
-    .alert{display:flex;gap:8px;align-items:center;border:1px solid #2e3b53;border-radius:10px;padding:6px 10px;background:#0b1220}
+    .user-info-popup{position:absolute;top:100%;left:0;z-index:10;width:280px;padding-top:8px;display:none;}
+    .loginbar:hover .user-info-popup{display:block;}
+    .user-info-popup .panel{border-width:2px;}
+    .user-info-popup-grid{display:grid;grid-template-columns:100px 1fr;gap:12px;align-items:center;}
+    .user-info-popup img{width:100px;height:100px;border-radius:12px;object-fit:cover;}
+    #urgent-notifications .alert{color:white; border-color:transparent;}
+    .drag-handle{font-size:24px;color:var(--muted);opacity:0.5;transition:opacity .2s; cursor:move;}
+    .drag-handle:hover{opacity:1;}
+    .hidden{display:none!important}
   </style>
 </head>
 <body>
-  <header class="wrap">
-    <div class="panel">
-      <div class="head">
-        <div class="loginbar flex items-center gap-2">
-          <strong id="loginName">Zalogowany jako: Kamil Kowalczyk</strong> <small id="loginId">(SoG1917)</small>
-          <select id="loginSelect" class="btn">
-            <option value="SoG1917|Kamil Kowalczyk">Kamil Kowalczyk (SoG1917)</option>
-            <option value="SoG1|Michael Scott">Michael Scott (SoG1)</option>
-            <option value="SoG1899|James Corden">James Corden (SoG1899)</option>
-            <option value="SoP1|Piotr Nowak">Piotr Nowak (SoP1)</option>
-          </select>
-          <button id="loginBtn" class="btn">🔐 Zmień</button>
-        </div>
-        <div class="badge">v0.007r</div>
+  <div id="loginView" class="wrap mt-10">
+      <div class="panel max-w-sm mx-auto">
+          <div class="head"><h2 class="m-0">Logowanie</h2></div>
+          <div class="body">
+              <form id="loginForm" class="flex flex-col gap-4">
+                  <input type="text" id="loginUid" class="btn" placeholder="Login (np. SoG1917)" required>
+                  <input type="password" id="loginPassword" class="btn" placeholder="Hasło" required>
+                  <button type="submit" class="btn primary">Zaloguj</button>
+              </form>
+          </div>
       </div>
-      <div class="body">
-        <h1 class="m-0">🏭 Kartonowy Napełniacz <span class="text-xs opacity-70">(pure HTML)</span></h1>
-        <div id="statusLine" class="opacity-80 mt-1">Status: gotowy</div>
-        <div id="chatStream" class="alerts mt-2"></div>
-      </div>
-    </div>
-  </header>
+  </div>
 
-  <main class="wrap">
-    <section id="machines" class="machines"></section>
-
-    <section class="panel mt-3">
-      <div class="head"><h2 class="m-0">🗒️ Notatki</h2></div>
-      <div class="body">
-        <div class="flex gap-2 flex-wrap">
-          <input id="noteInput" class="btn" style="flex:1" placeholder="Wpisz notatkę… (SoG1917: będzie prośba o kod 0..1000)">
-          <button id="addNote" class="btn primary">+ Dodaj</button>
+  <div id="appView" class="hidden">
+    <div id="urgent-notifications" class="fixed top-0 left-1/2 -translate-x-1/2 z-30 p-4 space-y-2 w-full max-w-2xl"></div>
+    <header class="wrap">
+      <div class="panel">
+        <div class="head">
+          <div class="loginbar flex items-center gap-3 relative">
+            <img id="userAvatar" src="https://placehold.co/40" alt="Avatar" class="w-8 h-8 rounded-full cursor-pointer">
+            <div class="flex flex-col items-start">
+              <div><strong id="loginName"></strong> <small id="loginId" class="opacity-70"></small></div>
+              <span id="loginRole" class="role-badge"></span>
+            </div>
+            <div class="user-info-popup"><div class="panel"><div class="body user-info-popup-grid">
+              <img id="popupUserAvatar" src="https://placehold.co/184" alt="User Avatar">
+              <div>
+                <h3 id="popupUserName" class="font-bold text-lg"></h3><p id="popupUserRole" class="text-sm"></p>
+                <p class="text-xs mt-2">Ostatnio zalogowany: <span id="popupLastLogin">teraz</span></p>
+              </div>
+            </div></div></div>
+          </div>
+          <div class="flex items-center gap-4">
+              <div id="langSwitcher" class="flex gap-1"></div>
+              <div id="themeSwitcher" class="flex items-center gap-2"></div>
+              <div class="badge">v0.009-alpha</div>
+          </div>
         </div>
-        <div id="notesList" class="notes-list mt-2"></div>
-      </div>
-    </section>
-
-    <section class="panel mt-3">
-      <div class="head"><h2 class="m-0">📌 Dalsze plany</h2></div>
-      <div class="body">
-        <div class="flex gap-2 flex-wrap">
-          <input id="planInput" class="btn" style="flex:1" placeholder="Nowy pomysł / zadanie…">
-          <button id="addPlan" class="btn">+ Dodaj plan</button>
-          <button id="refreshNP" class="btn ghost">↻ Odśwież z MySQL</button>
+        <div class="body">
+          <h1 class="m-0" data-translate-key="appTitle">🏭 Kartonowy Napełniacz</h1>
+          <div id="statusLine" class="opacity-80 mt-1">Status: gotowy</div>
         </div>
-        <div id="plansList" class="notes-list mt-2"></div>
       </div>
-    </section>
-  </main>
+    </header>
+
+    <main class="wrap">
+      <section id="machines" class="machines"></section>
+      <div id="draggable-panels">
+        <section class="panel mt-3" data-panel-id="chat"><div class="head">
+          <h2 class="m-0" data-translate-key="notesTitle">💬 CHAT</h2><span class="drag-handle panel-drag-handle">⠿</span>
+        </div><div class="body">
+          <div id="notesList" class="notes-list max-h-60 overflow-y-auto mb-2"></div>
+          <div class="flex gap-2 flex-wrap">
+            <input id="noteInput" class="btn" style="flex:1" data-translate-key="placeholderNote" placeholder="Wpisz wiadomość...">
+            <button id="addNote" class="btn primary" data-translate-key="addNoteBtn">Wyślij</button>
+          </div>
+        </div></section>
+        <section class="panel mt-3" data-panel-id="plans"><div class="head">
+          <h2 class="m-0" data-translate-key="plansTitle">📌 Dalsze plany</h2><span class="drag-handle panel-drag-handle">⠿</span>
+        </div><div class="body"><div id="plansList" class="notes-list"></div></div></section>
+      </div>
+    </main>
+    <footer class="wrap" id="adminFooter"><div class="panel mt-3"><div class="head">
+      <h2 class="m-0">🔧 Panel Admina</h2></div><div class="body">
+        <div class="flex gap-2 mb-4">
+            <button class="btn admin-table-btn" data-table="users">Użytkownicy</button>
+            <button class="btn admin-table-btn" data-table="machines">Maszyny</button>
+            <button class="btn admin-table-btn" data-table="orders">Zlecenia</button>
+        </div>
+        <div id="admin-table-container" class="overflow-x-auto"></div>
+    </div></div></footer>
+  </div>
+
+  <div id="colorPicker" class="hidden absolute panel p-2 z-20"><div class="grid grid-cols-4 gap-2">
+    <button class="w-6 h-6 rounded-full" style="background-color: #ef4444;" data-color="#ef4444"></button><button class="w-6 h-6 rounded-full" style="background-color: #f97316;" data-color="#f97316"></button><button class="w-6 h-6 rounded-full" style="background-color: #eab308;" data-color="#eab308"></button><button class="w-6 h-6 rounded-full" style="background-color: #84cc16;" data-color="#84cc16"></button><button class="w-6 h-6 rounded-full" style="background-color: #22c55e;" data-color="#22c55e"></button><button class="w-6 h-6 rounded-full" style="background-color: #14b8a6;" data-color="#14b8a6"></button><button class="w-6 h-6 rounded-full" style="background-color: #3b82f6;" data-color="#3b82f6"></button><button class="w-6 h-6 rounded-full" style="background-color: #a855f7;" data-color="#a855f7"></button><button class="w-6 h-6 rounded-full" style="background-color: #ec4899;" data-color="#ec4899"></button><button class="w-6 h-6 rounded-full bg-white border" data-color="#ffffff"></button><button class="w-6 h-6 rounded-full bg-slate-400" data-color="#94a3b8"></button><button class="w-6 h-6 rounded-full bg-black border" data-color="#000000"></button>
+  </div></div>
+  <div id="customTimeModal" class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-20"><div class="panel w-full max-w-xs"><div class="head">
+    <h2 class="m-0">Ustaw czas</h2><button id="closeTimeModalBtn" class="btn ghost">✖</button></div><div class="body">
+    <form id="customTimeForm" class="flex flex-col gap-4"><input type="number" id="customTimeInput" name="minutes" class="btn text-center text-lg" placeholder="Minuty" required><button type="submit" class="btn primary">Ustaw</button></form>
+  </div></div></div>
 
   <template id="tpl-machine">
-    <article class="panel machine">
-      <div class="head">
-        <div class="title"><span>🤖</span><h2 class="code"></h2></div>
+    <article class="panel machine" data-code=""><div class="head">
+      <div class="title"><span class="drag-handle">⠿</span><span>🤖</span><h2 class="code"></h2></div>
+      <button class="btn ghost settings-toggle">⚙️</button></div><div class="body">
+      <div class="meta text-sm space-y-2">
+        <div class="border border-white/10 rounded-lg p-2"><div class="flex justify-between">
+          <div class="flex gap-2"><span data-translate-key="auftrag">Auftrag:</span><strong class="auf-val"></strong></div>
+          <div class="flex gap-2"><span data-translate-key="nextAuftrag">Następny Auftrag:</span><span class="nextauf-val"></span></div>
+        </div></div>
+        <div class="flex gap-2 items-center px-2"><span data-translate-key="model">Model:</span><strong class="mdl-val"></strong><span class="w-4 h-4 rounded-full bg-white/50 border border-white/20 model-color-dot" title="Zmień kolor"></span></div>
+        <div class="border border-white/10 rounded-lg p-2"><span data-translate-key="period">Okres:</span><span class="period-val"></span></div>
       </div>
-      <div class="body">
-        <div class="meta">
-          <div>Auftrag: <span class="auf-val">—</span></div>
-          <div>Model: <span class="mdl-val">—</span></div>
-          <div>Okres: <span class="period-val">—</span></div>
-          <div>Następny Auftrag: <span class="nextauf-val">—</span></div>
-        </div>
-
-        <div class="progress"><div class="bar"></div><div class="label">0%</div></div>
-
-        <div class="pruef">
-          <div class="pr-head">🧪 Prüfung — czas:
-            <select class="pr-select">
-              <option value="3600">1h</option>
-              <option value="7200">2h</option>
-              <option value="10800">3h</option>
-              <option value="custom">ręcznie…</option>
-            </select>
-          </div>
-          <div class="pr-bar">
-            <div class="pr-fill"></div><div class="pr-label">60:00</div><div class="pr-reset">Reset</div>
-          </div>
-        </div>
+      <div class="progress mt-3"><div class="bar"></div><div class="label"></div></div>
+      <div class="flex justify-between items-center mt-2 text-sm">
+        <div data-translate-key="timeToComplete">Do ukończenia:</div><div class="font-bold text-lg completion-time"></div>
+        <div class="completion-warning text-red-500 font-bold text-xl hidden">!</div>
       </div>
-    </article>
+      <div class="pruef"><div class="pr-head"><span data-translate-key="pruefungTime">🧪 Prüfung — czas:</span><div class="pr-buttons flex gap-2">
+        <button class="btn ghost" data-time="3600">1H</button><button class="btn ghost" data-time="7200">2H</button><button class="btn ghost" data-time="10800">3H</button><button class="btn ghost" data-time="custom" data-translate-key="customTime">WŁASNY</button>
+      </div></div><div class="pr-bar"><div class="pr-fill"></div><div class="pr-label"></div><div class="pr-reset">Reset</div></div></div>
+      <div class="machine-settings hidden mt-4 space-y-2"><h4 class="font-bold border-b border-white/10 pb-1">Ustawienia</h4>
+        <div class="grid grid-cols-2 gap-x-4 gap-y-2 text-sm items-center">
+          <label>Model:</label><input type="text" class="setting-input btn text-sm" data-source="order" data-key="model">
+          <label>Czas (min):</label><input type="number" class="setting-input btn text-sm w-24" data-source="machine" data-key="default_duration_min">
+        </div><small class="text-xs opacity-60">Wciśnij ENTER, aby zapisać.</small>
+      </div>
+    </div></article>
   </template>
 
   <script>
-    // --- basic state
-    const ORDERS_KEY='KN_ORDERS_V1';
-    const NOTES_KEY='KN007_NOTES';
-    const PLANS_KEY='KN007_PLANS';
-    const ADMIN_PASS = 123; // kod 0..1000 wymagany do publikacji SoG1917
+    // --- Global State & Helpers ---
+    let APP_STATE = {};
+    const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+    const isAdmin=()=>APP_STATE.users[APP_STATE.current_user_uid]?.role==='Senior Developer';
+    function setStatus(t,success=true){const e=$("#statusLine");e.textContent="Status: "+t,e.style.color=success?"var(--accent)":"var(--yellow)",setTimeout(()=>{e.textContent="Status: gotowy",e.style.color="var(--muted)"},3e3)}
 
-    const DEFAULTS={
-      user:{uid:'SoG1917', name:'Kamil Kowalczyk'},
-      machines:[
-        { code:'MA820061', durationMin:25, pruef:3600 },
-        { code:'M820062',  durationMin:22, pruef:3600 },
-        { code:'MA820063', durationMin:25, pruef:3600 },
-        { code:'MA820064', durationMin:25, pruef:3600 },
-      ],
-      orders:{},
-    };
-    let CFG=JSON.parse(localStorage.getItem('KN007_CFG')||'null')||DEFAULTS;
-    const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
-    const isAdmin=()=> CFG.user?.uid==='SoG1917';
-    function persist(){ localStorage.setItem('KN007_CFG', JSON.stringify(CFG)); }
-    function setStatus(t){ $('#statusLine').textContent='Status: '+t; }
+    // --- API Client ---
+    const API={async call(t,e={}){try{const a=await fetch(`api.php?action=${t}`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(e)}),o=await a.json();if(!o.ok)throw new Error(o.error||"Błąd serwera");return o.data||o}catch(a){return console.error(`API call ${t} failed:`,a),setStatus(`Błąd API: ${a.message}`,!1),Promise.reject(a)}},register(t,e,a){return this.call("register",{uid:t,name:e,password:a})},login(t,e){return this.call("login",{uid:t,password:e})},getAppState(){return this.call("get_app_state")},saveUserSetting(t,e){return this.call("save_user_setting",{key:t,value:e})},saveMachineSetting(t,e,a){return this.call("save_machine_setting",{code:t,key:e,value:a})},getChatMessages(){return this.call("get_chat_messages")},postChatMessage(t,e=null){return this.call("post_chat_message",{message:t,parent_id:e})},getTableData(t){return this.call("get_table_data",{table:t})},updateTableData(t,e,a,o){return this.call("update_table_data",{table:t,id:e,field:a,value:o})}};
 
-    // --- kv storage via php
-    async function saveShared(key,json){ try{ const res=await fetch('storage.php?a=set&key='+encodeURIComponent(key),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(json)}); const j=await res.json(); return !!j.ok; }catch(e){ console.error(e); return false; } }
-    async function loadShared(key){ try{ const res=await fetch('storage.php?a=get&key='+encodeURIComponent(key)); const j=await res.json(); return j.v?JSON.parse(j.v):null; }catch(e){ console.error(e); return null; } }
+    // --- Component Classes ---
+    let activePruefung=null,activeMachineForColor=null;
+    class Pruefung{constructor(t){this.root=t,this.fill=$(".pr-fill",t),this.label=$(".pr-label",t),this.buttons=$$(".pr-buttons button",t),this.reset=$(".pr-reset",t),this.bar=$(".pr-bar",t),this.total=3600,this.start=Date.now(),this.bind(),this.tick()}bind(){this.buttons.forEach(t=>{t.addEventListener("click",()=>{this.buttons.forEach(t=>t.classList.remove("primary")),t.classList.add("primary");const e=t.dataset.time;"custom"===e?this.setTime(prompt("Wpisz czas w minutach:","60")):(this.total=parseInt(e,10),this.start=Date.now())})}),this.reset.addEventListener("click",()=>{this.start=Date.now(),this.buttons.forEach(t=>t.classList.remove("primary"))}),this.bar.addEventListener("contextmenu",t=>{t.preventDefault(),activePruefung=this,$("#customTimeModal").classList.remove("hidden"),$("#customTimeInput").focus()})}setTime(t){this.total=60*Math.max(60,parseInt(t,10)||0),this.start=Date.now(),this.buttons.forEach(t=>t.classList.remove("primary"))}tick(){const t=Math.min(this.total,Math.floor((Date.now()-this.start)/1e3)),e=this.total-t,a=this.total>0?Math.floor(t/this.total*100):0;this.fill.style.width=a+"%";const o=String(Math.floor(e/60)).padStart(2,"0"),s=String(e%60).padStart(2,"0");this.label.textContent=`${o}:${s}`,requestAnimationFrame(()=>this.tick())}}
+    class Machine{constructor(t,e,a){this.root=$("#tpl-machine").content.firstElementChild.cloneNode(!0),this.data=e,this.orders=a,this.code=e.code,this.root.dataset.code=this.code,$(".code",this.root).textContent=this.code,this.data.completionTimestamp||(this.data.completionTimestamp=Date.now()+1e3*(60+Math.floor(14940*Math.random()))),this.dot=$(".model-color-dot",this.root),this.dot.addEventListener("contextmenu",t=>{t.preventDefault(),activeMachineForColor=this;const e=$("#colorPicker");e.style.left=t.pageX+"px",e.style.top=t.pageY+"px",e.classList.remove("hidden")}),this.completionTimeEl=$(".completion-time",this.root),this.completionWarningEl=$(".completion-warning",this.root),this.settingsToggle=$(".settings-toggle",this.root),this.settingsPanel=$(".machine-settings",this.root),this.settingsInputs=$$(".setting-input",this.settingsPanel),this.settingsToggle.addEventListener("click",()=>this.settingsPanel.classList.toggle("hidden")),this.settingsInputs.forEach(t=>{t.addEventListener("keyup",e=>{"Enter"===e.key&&this.saveSetting(t)})}),this.bar=$(".bar",this.root),this.label=$(".label",this.root),t.appendChild(this.root),this.pr=new Pruefung($(".pruef",this.root));let o=performance.now(),s=6e4*(e.default_duration_min||25);const i=()=>{const t=Math.min(1,(performance.now()-o)/s);this.bar.style.width=100*t+"%",this.label.textContent=Math.floor(100*t)+"%",requestAnimationFrame(i)};requestAnimationFrame(i),this.render(),this.tickCompletion()}saveSetting(t){const e=t.dataset.key,a=t.dataset.source;let o=t.value;"number"===t.type&&(o=parseFloat(o)||0),"machine"===a?API.saveMachineSetting(this.code,e,o).then(()=>setStatus("Zapisano "+e)):"order"===a&&setStatus("Zapis zamówień niezaimplementowany.",!1),t.blur(),this.render()}render(){const t=this.orders[this.code]||{};$(".auf-val",this.root).textContent=t.auftrag_number||"—",$(".mdl-val",this.root).textContent=t.model||"—",$(".period-val",this.root).textContent=t.period||"—",$(".nextauf-val",this.root).textContent=t.next_auftrag||"—",this.dot.style.backgroundColor=this.data.color||"#94a3b8",this.settingsInputs.forEach(e=>{const a=e.dataset.key,o=e.dataset.source;"machine"===o?e.value=this.data[a]||"":"order"===o&&(e.value=t[a]||"")})}setColor(t){this.data.color=t,this.render(),API.saveMachineSetting(this.code,"color",t)}tickCompletion(){const t=Date.now(),e=Math.max(0,Math.floor((this.data.completionTimestamp-t)/1e3)),a=Math.floor(e/3600),o=Math.floor(e%3600/60);this.completionTimeEl.textContent=`${String(a)}h ${String(o).padStart(2,"0")}m`;const s=7200,i=3600;e>0&&e<s?(this.completionWarningEl.classList.remove("hidden"),e<i?showUrgentNotification(this.code,`Koniec Auftragu ${this.code} w ciągu godziny!`,"danger"):showUrgentNotification(this.code,`Koniec Auftragu ${this.code} w ciągu 2 godzin!`,"warning")):(this.completionWarningEl.classList.add("hidden"),hideUrgentNotification(this.code)),requestAnimationFrame(()=>this.tickCompletion())}}
 
-    // --- machines (minimal for 0.007 look)
-    class Pruefung{ constructor(root){ this.root=root; this.fill=$('.pr-fill',root); this.label=$('.pr-label',root); this.sel=$('.pr-select',root); this.reset=$('.pr-reset',root);
-        this.total=3600; this.start=Date.now(); this.bind(); this.tick(); }
-      bind(){ this.sel.addEventListener('change',()=>{ const v=this.sel.value; if(v==='custom'){ const m=prompt('Minuty:', '60'); this.total=Math.max(60,(parseInt(m,10)||60)*60); } else { this.total=parseInt(v,10); } this.start=Date.now(); });
-        this.reset.addEventListener('click',()=>{ this.start=Date.now(); }); }
-      tick(){ const el=Math.min(this.total, Math.floor((Date.now()-this.start)/1000)); const left=this.total-el; const pct=Math.floor(el/this.total*100);
-        this.fill.style.width=pct+'%'; const mm=String(Math.floor(left/60)).padStart(2,'0'), ss=String(left%60).padStart(2,'0'); this.label.textContent=`${mm}:${ss}`;
-        requestAnimationFrame(()=>this.tick()); }
-    }
+    // --- Rendering Functions ---
+    function renderMachines(){const t=$("#machines");t.innerHTML="";const e=APP_STATE.user_settings.machine_order||Object.keys(APP_STATE.machines);e.forEach(e=>{const a=APP_STATE.machines[e];a&&(a.code=e,new Machine(t,a,APP_STATE.orders))})}
+    function makeStamp(t,e,a=!1){const o=String(t.getDate()).padStart(2,"0"),s=String(t.getMonth()+1).padStart(2,"0"),i=t.getFullYear(),n=String(t.getHours()).padStart(2,"0"),r=String(t.getMinutes()).padStart(2,"0");return`<span class="stamp"><span class="chip small">[${o}/${s}/${i}]</span> <span class="chip small">[${n}:${r}]</span> <span class="chip small">${e.uid} (${e.name})</span></span>`}
+    async function renderChat(){const t=await API.getChatMessages(),e=$("#notesList");e.innerHTML="",t.forEach(t=>{const a=document.createElement("div");a.className="row";const o={uid:t.uid,name:t.name};a.innerHTML=`<div class="meta">${makeStamp(new Date(t.created_at),o)}</div><div class="txt">${t.message}</div>`,e.appendChild(a)})}
 
-    class Machine{ constructor(container,data,orders){ this.root=$('#tpl-machine').content.firstElementChild.cloneNode(true);
-        this.code=data.code; $('.code',this.root).textContent=this.code;
-        const o=orders[this.code]||genOrder(); $('.auf-val',this.root).textContent=o.auftrag; $('.mdl-val',this.root).textContent=o.model; $('.period-val',this.root).textContent=o.period; $('.nextauf-val',this.root).textContent=o.next||'—';
-        this.bar=$('.bar',this.root); this.label=$('.label',this.root);
-        container.appendChild(this.root); this.pr=new Pruefung($('.pruef',this.root));
-        // simple progress demo
-        let start=performance.now(), dur=(data.durationMin||25)*60000; const step=()=>{ const p=Math.min(1,(performance.now()-start)/dur); this.bar.style.width=(p*100)+'%'; this.label.textContent=Math.floor(p*100)+'%'; requestAnimationFrame(step) }; requestAnimationFrame(step);
-    } }
+    // --- App Initialization & Login ---
+    function showUser(){const t=APP_STATE.current_user_uid,e=APP_STATE.users[t]||{name:"Nieznany",avatar_url:""};$("#loginName").textContent=e.name,$("#loginId").textContent=t||"";const a=e.avatar_url||"https://placehold.co/40/0e1117/ffffff?text="+(e.name?.[0]||"?");$("#userAvatar").src=a;const o=getUserRole(t),s=$("#loginRole");o?(s.textContent=o.name,s.className="role-badge "+o.className,s.style.display="inline-block"):(s.style.display="none"),$("#popupUserAvatar").src=e.avatar_url||"https://placehold.co/184/0e1117/ffffff?text="+(e.name?.[0]||"?"),$("#popupUserName").textContent=e.name,$("#popupUserRole").textContent=o?o.name:"Użytkownik"}
+    function getUserRole(t){const e=APP_STATE.users[t];if(!e||!e.role)return null;const a={...};return a[e.role]||{name:e.role,className:"role-user"}}
 
-    function genOrder(){ const rnd=String(Math.floor(Math.random()*10000)).padStart(4,'0'); const s=new Date(); const e=new Date(); e.setDate(s.getDate()+5);
-      const F=d=>`${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}.${d.getFullYear()}`;
-      return { auftrag:'1012'+rnd, model:'DASG-1 (201044)', period:`od ${F(s)} do ${F(e)}`, next:'' };
-    }
+    function initActionButtons(){$("#addNote").onclick=async()=>{const t=$("#noteInput").value.trim();t&&(await API.postChatMessage(t),$("#noteInput").value="",renderChat())},$("#userAvatar").addEventListener("click",async()=>{prompt("Podaj nowy URL avatara:",APP_STATE.users[APP_STATE.current_user_uid].avatar_url||"");setStatus("Zapis avatara niezaimplementowany.",!1)})}
+    function initThemeSwitcher(){const t=$$("#themeSwitcher button"),e=document.body;t.forEach(a=>{a.addEventListener("click",()=>{const t=a.dataset.theme;e.dataset.theme=t,API.saveUserSetting("theme",t)})})}
+    function initLangSwitcher(){const t=$$("#langSwitcher button");t.forEach(t=>{t.addEventListener("click",()=>setLanguage(t.dataset.lang))})}
+    function initDragAndDrop(){const t=$("#machines");t&&new Sortable(t,{animation:150,handle:".drag-handle",onEnd:function(t){const e=Array.from(t.to.children).map(t=>t.dataset.code);API.saveUserSetting("machine_order",e)}});const e=$("#draggable-panels");e&&new Sortable(e,{animation:150,handle:".panel-drag-handle",onEnd:function(t){const e=Array.from(t.to.children).map(t=>t.dataset.panelId);API.saveUserSetting("panel_order",e)}})}
+    function initPanelOrder(){const t=$("#draggable-panels"),e=APP_STATE.user_settings.panel_order;if(t&&e){const a={};$$("[data-panel-id]",t).forEach(t=>{a[t.dataset.panelId]=t}),e.forEach(e=>{const o=a[e];o&&t.appendChild(o)})}}
+    function renderAdminPanel(){const t=$("#adminFooter");isAdmin()?(t.style.display="block",$$(".admin-table-btn",t).forEach(t=>{t.addEventListener("click",async()=>{const e=t.dataset.table;try{const t=await API.getTableData(e);renderAdminTable(e,t)}catch(a){$("#admin-table-container").innerHTML=`<p class="text-red-500">Błąd ładowania danych: ${a.message}</p>`}})})):t.style.display="none"}
+    function renderAdminTable(t,e){const a=$("#admin-table-container");if(!e||0===e.length)return void(a.innerHTML="<p>Brak danych w tabeli.</p>");const o=Object.keys(e[0]),s="user_settings"===t?"user_id":"id",i=document.createElement("table");i.className="w-full text-left text-sm",i.innerHTML=`\n            <thead class="border-b border-white/20">\n                <tr>${o.map(t=>`<th class="p-2">${t}</th>`).join("")}</tr>\n            </thead>\n            <tbody>\n                ${e.map(e=>`\n                    <tr class="border-b border-white/20" data-id="${e[s]}">\n                        ${o.map(t=>`<td class="p-2" contenteditable="true" data-field="${t}">${null===e[t]?"":e[t]}</td>`).join("")}\n                    </tr>\n                `).join("")}\n            </tbody>\n        `,a.innerHTML="",a.appendChild(i),$$('td[contenteditable="true"]',i).forEach(e=>{e.addEventListener("blur",async a=>{const o=a.target.closest("tr").dataset.id,i=a.target.dataset.field,n=a.target.textContent;try{await API.updateTableData(t,o,i,n),setStatus("Zapisano komórkę.",!0),a.target.style.backgroundColor="var(--accent)",setTimeout(()=>a.target.style.backgroundColor="",1e3)}catch(r){setStatus(r.message,!1)}})})}
 
-    function renderMachines(){ const box=$('#machines'); box.innerHTML=''; (CFG.machines||[]).forEach(m=> new Machine(box,m, CFG.orders||{})); }
+    async function initializeApp(){try{const t=await API.getAppState();APP_STATE=t;const e=[{l:"pl",n:"PL"},{l:"en",n:"EN"},{l:"de",n:"DE"},{l:"ar",n:"AR"}];$("#langSwitcher").innerHTML=e.map(t=>`<button class="btn ghost text-xs" data-lang="${t.l}">${t.n}</button>`).join("");const a=[{c:"#0e1117",n:"dark"},{c:"#f3f4f6",n:"light"},{c:"#0c1424",n:"blue"},{c:"#052e16",n:"green"}];$("#themeSwitcher").innerHTML=a.map(t=>`<button class="w-4 h-4 rounded-full border-2" style="background-color:${t.c}" data-theme="${t.n}" title="${t.n} Theme"></button>`).join(""),document.body.dataset.theme=APP_STATE.user_settings.theme||"dark",setLanguage(APP_STATE.user_settings.language||"pl"),showUser(),renderMachines(),renderChat(),initPanelOrder(),initDragAndDrop(),initActionButtons(),initThemeSwitcher(),initLangSwitcher(),renderAdminPanel(),$("#loginView").classList.add("hidden"),$("#appView").classList.remove("hidden")}catch(t){$("#loginView").classList.remove("hidden"),$("#appView").classList.add("hidden")}}
 
-    // --- stamps
-    function makeStamp(ts,user,smaller=false){
-      const d=new Date(ts);
-      const dd=String(d.getDate()).padStart(2,'0'), mm=String(d.getMonth()+1).padStart(2,'0'), yyyy=d.getFullYear();
-      const hh=String(d.getHours()).padStart(2,'0'), min=String(d.getMinutes()).padStart(2,'0');
-      const small=smaller?' small':'';
-      return `<span class="stamp">
-        <span class="chip small digits${small}">[${dd}/${mm}/${yyyy}]</span>
-        <span class="chip small digits${small}">[${hh}:${min}]</span>
-        <span class="chip small">${user.uid} (${user.name})</span>
-      </span>`;
-    }
-
-    // --- chat stream
-    function chatPush(text){ const el=document.createElement('div'); el.className='alert'; el.innerHTML=`<span>💬 ${text}</span> <button class="btn ghost">✖</button>`; $('.btn',el).onclick=()=>el.remove(); $('#chatStream').prepend(el); }
-
-    // --- notes / plans
-    let NOTES=[], PLANS=[];
-    function renderNotes(){
-      const list=$('#notesList'); list.innerHTML='';
-      NOTES.forEach(n=>{
-        const row=document.createElement('div'); row.className='row';
-        const tag = n.status==='DRAFT' ? '<span class="tag draft">DRAFT</span>' : '';
-        row.innerHTML=`<div class="meta">${makeStamp(n.ts, {uid:n.user,name:n.userName})} ${tag}</div>
-                       <div class="txt">${n.text}</div>
-                       <div class="act"></div>`;
-        const act=$('.act',row);
-        if(isAdmin()){
-          const bE=document.createElement('button'); bE.className='btn'; bE.textContent='✏️'; bE.title='Edytuj';
-          const bR=document.createElement('button'); bR.className='btn'; bR.textContent='↩️'; bR.title='Odpowiedz';
-          const bD=document.createElement('button'); bD.className='btn'; bD.textContent='🗑️'; bD.title='Usuń';
-          bE.onclick=async()=>{ const v=prompt('Edytuj notatkę', n.text); if(v!=null){ n.text=v; await saveNotes(); renderNotes(); } };
-          bR.onclick=async()=>{ const v=prompt('Odpowiedź', ''); if(v){ NOTES.push({id:Date.now()+Math.random(), ts:Date.now(), user:CFG.user.uid, userName:CFG.user.name, text:`↪ ${v} (odpowiedź na #${n.id})`, status:'FINAL'}); await saveNotes(); renderNotes(); } };
-          bD.onclick=async()=>{ if(confirm('Usunąć notatkę?')){ NOTES = NOTES.filter(x=>x.id!==n.id); await saveNotes(); renderNotes(); } };
-          act.append(bE,bR,bD);
-        }
-        list.appendChild(row);
-      });
-    }
-    function renderPlans(){
-      const list=$('#plansList'); list.innerHTML='';
-      PLANS.forEach(p=>{
-        const row=document.createElement('div'); row.className='row';
-        row.innerHTML=`<div class="meta">${makeStamp(p.ts, {uid:p.user,name:p.userName}, true)}</div>
-                       <div class="txt">${p.text}</div>`;
-        list.appendChild(row);
-      });
-    }
-    async function saveNotes(){ await saveShared(NOTES_KEY, NOTES); }
-    async function loadNotes(){ const db=await loadShared(NOTES_KEY); if(db){ NOTES=db; } renderNotes(); }
-    async function savePlans(){ await saveShared(PLANS_KEY, PLANS); }
-    async function loadPlans(){ const db=await loadShared(PLANS_KEY); if(db){ PLANS=db; } renderPlans(); }
-
-    // --- login
-    function showUser(){ $('#loginName').textContent='Zalogowany jako: '+(CFG.user?.name||'nieznany'); $('#loginId').textContent=CFG.user?.uid?`(${CFG.user.uid})`:'(nieznany)'; }
-    function initLogin(){
-      showUser();
-      $('#loginBtn').onclick=()=>{
-        const sel=$('#loginSelect').value; const [uid,name]=sel.split('|');
-        const pass=prompt(`Hasło dla ${name} (${uid}):`,''); if(!pass){ showUser({}); return; }
-        CFG.user={uid,name}; persist(); showUser();
-      };
-    }
-
-    // --- init buttons
-    function initNotesPlans(){
-      $('#addNote').onclick=async()=>{
-        const v=$('#noteInput').value.trim(); if(!v) return;
-        let status='FINAL';
-        if(isAdmin()){
-          const code=prompt('Podaj kod (0..1000) aby opublikować do „chat”. Błędny -> DRAFT:','');
-          const n = parseInt(code,10);
-          if(!(n>=0 && n<=1000) || n!==ADMIN_PASS){
-            status='DRAFT';
-          } else {
-            status='FINAL';
-            chatPush(v);
-          }
-        }
-        NOTES.push({id:Date.now()+Math.random(), ts:Date.now(), user:CFG.user.uid, userName:CFG.user.name, text:v, status});
-        $('#noteInput').value=''; await saveNotes(); renderNotes();
-      };
-      $('#addPlan').onclick=async()=>{
-        const v=$('#planInput').value.trim(); if(!v) return;
-        PLANS.push({id:Date.now()+Math.random(), ts:Date.now(), user:CFG.user.uid, userName:CFG.user.name, text:v});
-        $('#planInput').value=''; await savePlans(); renderPlans();
-      };
-      $('#refreshNP').onclick=async()=>{ await loadNotes(); await loadPlans(); };
-      loadNotes(); loadPlans();
-    }
-
-    // --- machines render
-    function initMachines(){ const box=$('#machines'); box.innerHTML=''; (CFG.machines||[]).forEach(m=> new Machine(box,m, CFG.orders||{})); }
-
-    function init(){ initMachines(); initLogin(); initNotesPlans(); setStatus('gotowy'); }
-    init();
+    // --- Initial entry point ---
+    $("#loginForm").addEventListener("submit",async t=>{t.preventDefault();const e=$("#loginUid").value,a=$("#loginPassword").value;try{await API.login(e,a),initializeApp()}catch(o){}});
+    initializeApp();
   </script>
 </body>
 </html>
